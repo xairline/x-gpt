@@ -1,0 +1,61 @@
+definitions:
+  ResponseError:
+    properties:
+      message:
+        type: string
+    type: object
+  ResponseOk:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /apis/liveness:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: K8s Liveness endpoint
+      tags:
+      - Misc
+  /apis/readiness:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: K8s Readiness endpoint
+      tags:
+      - Misc
+  /apis/version:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseOk'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get version of cray-nls service
+      tags:
+      - Misc
+swagger: "2.0"
