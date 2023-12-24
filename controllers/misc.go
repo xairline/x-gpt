@@ -26,14 +26,16 @@ func NewMiscController(logger utils.Logger) MiscController {
 
 // GetVersion
 //
-//	@Summary	Get version of cray-nls service
+//	@Summary	Get version of GPT X-Plane plugin
 //	@Tags		Misc
 //	@Accept		json
 //	@Produce	json
 //	@Success	200	{object}	utils.ResponseOk
 //	@Failure	500	{object}	utils.ResponseError
-//	@Router		/apis/version [get]
+//	@Router		/version [get]
 func (u MiscController) GetVersion(c *gin.Context) {
+	// log headers
+	u.logger.Info("Headers: %v", c.Request.Header)
 	c.JSON(200, utils.ResponseOk{Message: VERSION})
 }
 
@@ -45,7 +47,7 @@ func (u MiscController) GetVersion(c *gin.Context) {
 //	@Produce	json
 //	@Success	204
 //	@Failure	500	{object}	utils.ResponseError
-//	@Router		/apis/readiness [get]
+//	@Router		/readiness [get]
 func (u MiscController) GetReadiness(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
@@ -57,7 +59,7 @@ func (u MiscController) GetReadiness(c *gin.Context) {
 //	@Accept		json
 //	@Produce	json
 //	@Success	204
-//	@Router		/apis/liveness [get]
+//	@Router		/liveness [get]
 func (u MiscController) GetLiveness(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }

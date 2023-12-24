@@ -1,3 +1,4 @@
+basePath: /apis
 definitions:
   ResponseError:
     properties:
@@ -9,10 +10,22 @@ definitions:
       message:
         type: string
     type: object
+  models.DatarefValue:
+    properties:
+      name:
+        type: string
+      value: {}
+    type: object
+  models.SetDatarefValue:
+    properties:
+      dataref:
+        type: string
+      value: {}
+    type: object
 info:
   contact: {}
 paths:
-  /apis/liveness:
+  /liveness:
     get:
       consumes:
       - application/json
@@ -24,7 +37,7 @@ paths:
       summary: K8s Liveness endpoint
       tags:
       - Misc
-  /apis/readiness:
+  /readiness:
     get:
       consumes:
       - application/json
@@ -40,7 +53,7 @@ paths:
       summary: K8s Readiness endpoint
       tags:
       - Misc
-  /apis/version:
+  /version:
     get:
       consumes:
       - application/json
@@ -55,7 +68,109 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseError'
-      summary: Get version of cray-nls service
+      summary: Get version of GPT X-Plane plugin
       tags:
       - Misc
+  /xplm/dataref:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: xplane dataref string
+        in: query
+        name: dataref_str
+        required: true
+        type: string
+      - description: alias name, if not set, dataref_str will be used
+        in: query
+        name: alias
+        type: string
+      - description: '-1: raw, 2: round up to two digits'
+        in: query
+        name: precision
+        required: true
+        type: integer
+      - description: transform xplane byte array to string
+        in: query
+        name: is_byte_array
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DatarefValue'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      security:
+      - Oauth2Application:
+        - ""
+      summary: Get Dataref
+      tags:
+      - Dataref
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: dataref and value
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetDatarefValue'
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      security:
+      - Oauth2Application:
+        - ""
+      summary: Set Dataref
+      tags:
+      - Dataref
+  /xplm/datarefs:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DatarefValue'
+            type: array
+        "501":
+          description: Not Implemented
+      security:
+      - Oauth2Application:
+        - ""
+      summary: Get a list of Dataref
+      tags:
+      - Dataref
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "501":
+          description: Not Implemented
+      security:
+      - Oauth2Application:
+        - ""
+      summary: Set a list of Dataref
+      tags:
+      - Dataref
+securityDefinitions:
+  "":
+    authorizationUrl: https://pluginlab.xairline.org/oauth/authorize
+    flow: accessCode
+    tokenUrl: https://pluginlab.xairline.org/oauth/token
+    type: oauth2
 swagger: "2.0"

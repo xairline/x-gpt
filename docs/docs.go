@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/apis/liveness": {
+        "/liveness": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -34,7 +34,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/apis/readiness": {
+        "/readiness": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -59,7 +59,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/apis/version": {
+        "/version": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -70,7 +70,7 @@ const docTemplate = `{
                 "tags": [
                     "Misc"
                 ],
-                "summary": "Get version of cray-nls service",
+                "summary": "Get version of GPT X-Plane plugin",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -83,6 +83,163 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/ResponseError"
                         }
+                    }
+                }
+            }
+        },
+        "/xplm/dataref": {
+            "get": {
+                "security": [
+                    {
+                        "Oauth2Application": [
+                            ""
+                        ]
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Get Dataref",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "xplane dataref string",
+                        "name": "dataref_str",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "alias name, if not set, dataref_str will be used",
+                        "name": "alias",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "-1: raw, 2: round up to two digits",
+                        "name": "precision",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "transform xplane byte array to string",
+                        "name": "is_byte_array",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DatarefValue"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Oauth2Application": [
+                            ""
+                        ]
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Set Dataref",
+                "parameters": [
+                    {
+                        "description": "dataref and value",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SetDatarefValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            }
+        },
+        "/xplm/datarefs": {
+            "put": {
+                "security": [
+                    {
+                        "Oauth2Application": [
+                            ""
+                        ]
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Set a list of Dataref",
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Oauth2Application": [
+                            ""
+                        ]
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dataref"
+                ],
+                "summary": "Get a list of Dataref",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DatarefValue"
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented"
                     }
                 }
             }
@@ -104,6 +261,32 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.DatarefValue": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {}
+            }
+        },
+        "models.SetDatarefValue": {
+            "type": "object",
+            "properties": {
+                "dataref": {
+                    "type": "string"
+                },
+                "value": {}
+            }
+        }
+    },
+    "securityDefinitions": {
+        "": {
+            "type": "oauth2",
+            "flow": "accessCode",
+            "authorizationUrl": "https://pluginlab.xairline.org/oauth/authorize",
+            "tokenUrl": "https://pluginlab.xairline.org/oauth/token"
         }
     }
 }`
@@ -112,7 +295,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/apis",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",
