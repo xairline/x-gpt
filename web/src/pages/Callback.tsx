@@ -4,7 +4,7 @@ import {Navigate} from 'react-router-dom';
 
 const Callback: React.FC = () => {
     const {isLoading} = useHandleSignInCallback(() => {
-        return <Navigate to={"/dashboard"}/>
+        window.location.href = '/';
     });
 
     return isLoading ? <p>Redirecting...</p> : null;

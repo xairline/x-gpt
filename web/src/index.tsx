@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
-import {LogtoConfig, LogtoProvider} from '@logto/react';
+import {LogtoConfig, LogtoProvider, UserScope} from '@logto/react';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -12,15 +12,16 @@ const root = ReactDOM.createRoot(
 const config: LogtoConfig = {
     endpoint: 'https://auth.xairline.org',
     appId: 'sebl8fjkssu2oaw2s8gsv',
+    scopes: [UserScope.Email],
 };
 
 const domain = window.location.origin + "/api";
 root.render(
-    <LogtoProvider config={config}>
-        <BrowserRouter>
+    <BrowserRouter>
+        <LogtoProvider config={config}>
             <App/>
-        </BrowserRouter>
-    </LogtoProvider>
+        </LogtoProvider>
+    </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

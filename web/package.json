@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@ant-design/plots": "^1.2.5",
     "@ant-design/pro-components": "^2.6.11",
     "@logto/react": "^2.2.3",
