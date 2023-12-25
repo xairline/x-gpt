@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Col, Divider, Dropdown, MenuProps, Row, Space, Spin, Typography} from "antd";
-import { useLogto } from '@logto/react';
+import {Avatar, Dropdown, MenuProps, Spin, Typography} from "antd";
+import {useLogto} from '@logto/react';
 import {Link} from "react-router-dom";
 
 const {Title, Paragraph} = Typography;
