@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
+	"net/http"
 	"strings"
 )
 
@@ -29,7 +30,7 @@ func (ws WebSocketController) Upgrade(c *gin.Context) {
 	mySigningKey := []byte(ws.env.JwtSecret)
 	auth, success := c.GetQuery("auth")
 	if !success {
-		c.JSON(500, utils.ResponseError{Message: `missing "auth"`})
+		c.JSON(http.StatusUnauthorized, utils.ResponseError{Message: `missing "auth"`})
 		return
 	}
 	// Parse the token. Make sure to validate the alg is what you expect.
@@ -42,7 +43,7 @@ func (ws WebSocketController) Upgrade(c *gin.Context) {
 		return mySigningKey, nil
 	})
 	if err != nil {
-		c.JSON(401, utils.ResponseError{Message: err.Error()})
+		c.JSON(http.StatusUnauthorized, utils.ResponseError{Message: err.Error()})
 		return
 	}
 	ws.webSocketSvc.Upgrade(c, token.Claims.(jwt.MapClaims)["token"].(string))
@@ -65,7 +66,7 @@ func (ws WebSocketController) GetConnectionToken(c *gin.Context) {
 
 	// Check if the Authorization header is in the correct format
 	if !strings.HasPrefix(authHeader, "Bearer ") {
-		c.JSON(400, utils.ResponseError{Message: "Invalid authorization header"})
+		c.JSON(http.StatusBadRequest, utils.ResponseError{Message: "Invalid authorization header"})
 		return
 	}
 
@@ -81,7 +82,7 @@ func (ws WebSocketController) GetConnectionToken(c *gin.Context) {
 	signedToken, err := token.SignedString([]byte(ws.env.JwtSecret))
 	if err != nil {
 		// Return an error response if there's an issue with signing the token
-		c.JSON(500, utils.ResponseError{Message: err.Error()})
+		c.JSON(http.StatusUnauthorized, utils.ResponseError{Message: err.Error()})
 		return
 	}
 
