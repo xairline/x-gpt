@@ -28,7 +28,7 @@ var (
 // GetLogger get the logger
 func GetLogger() Logger {
 	if globalLogger == nil {
-		logger := newLogger()
+		logger := NewLogger()
 		globalLogger = &logger
 	}
 	return *globalLogger
@@ -61,8 +61,8 @@ func newSugaredLogger(logger *zap.Logger) *Logger {
 	}
 }
 
-// newLogger sets up logger
-func newLogger() Logger {
+// NewLogger sets up logger
+func NewLogger() Logger {
 
 	config := zap.NewDevelopmentConfig()
 	env := os.Getenv("ENV")

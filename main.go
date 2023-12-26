@@ -8,9 +8,9 @@ import (
 )
 
 // @SecurityDefinitions.oauth2.accessCode
-// @tokenUrl https://pluginlab.xairline.org/oauth/token
-// @authorizationUrl https://pluginlab.xairline.org/oauth/authorize
-// @scope all
+// @tokenUrl https://auth.xairline.org/oidc/token
+// @authorizationUrl https://auth.xairline.org/oidc/auth
+// @scope email
 
 // @BasePath	/apis
 func main() {

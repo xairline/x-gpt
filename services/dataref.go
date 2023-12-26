@@ -1,6 +1,6 @@
 package services
 
-//go:generate mockgen -destination=../__mocks__/dataref/dataref.go -package=mocks -source=dataref.go
+//go:generate mockgen -destination=../services/__mocks__/dataref.go -package=mocks -source=dataref.go
 
 import "C"
 import (

@@ -71,6 +71,27 @@ paths:
       summary: Get version of GPT X-Plane plugin
       tags:
       - Misc
+  /ws/token:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseOk'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      security:
+      - Oauth2Application:
+        - ""
+      summary: Get Token for WebSocket connection
+      tags:
+      - Web Socket
   /xplm/dataref:
     get:
       consumes:
@@ -169,8 +190,8 @@ paths:
       - Dataref
 securityDefinitions:
   "":
-    authorizationUrl: https://pluginlab.xairline.org/oauth/authorize
+    authorizationUrl: https://auth.xairline.org/oidc/auth
     flow: accessCode
-    tokenUrl: https://pluginlab.xairline.org/oauth/token
+    tokenUrl: https://auth.xairline.org/oidc/token
     type: oauth2
 swagger: "2.0"

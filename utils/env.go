@@ -7,6 +7,7 @@ import (
 // Env has environment stored
 type Env struct {
 	ServerPort string `mapstructure:"SERVER_PORT"`
+	JwtSecret  string `mapstructure:"JWT_SECRET"`
 }
 
 // NewEnv creates a new environment

@@ -6,6 +6,7 @@ var Module = fx.Options(
 	fx.Provide(NewRoutes),
 	fx.Provide(NewMiscRoutes),
 	fx.Provide(NewDatarefRoutes),
+	fx.Provide(NewWebSocketRoutes),
 )
 
 // Routes contains multiple routes
@@ -20,10 +21,12 @@ type Route interface {
 func NewRoutes(
 	miscRoutes MiscRoutes,
 	datarefRoutes DatarefRoutes,
+	webSocketRoutes WebSocketRoutes,
 ) Routes {
 	return Routes{
 		miscRoutes,
 		datarefRoutes,
+		webSocketRoutes,
 	}
 }
 

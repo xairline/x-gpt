@@ -85,6 +85,7 @@ func (u DatarefController) SetDataref(c *gin.Context) {
 	if err != nil {
 		u.logger.Errorf("dataref: %+v", err)
 		c.JSON(500, utils.ResponseError{Message: err.Error()})
+		return
 	}
 	u.datarefSvc.SetValueByDatarefName(data.Request.Dataref, data.Request.Value)
 }

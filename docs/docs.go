@@ -87,6 +87,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/ws/token": {
+            "get": {
+                "security": [
+                    {
+                        "Oauth2Application": [
+                            ""
+                        ]
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Web Socket"
+                ],
+                "summary": "Get Token for WebSocket connection",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseOk"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/xplm/dataref": {
             "get": {
                 "security": [
@@ -285,8 +320,8 @@ const docTemplate = `{
         "": {
             "type": "oauth2",
             "flow": "accessCode",
-            "authorizationUrl": "https://pluginlab.xairline.org/oauth/authorize",
-            "tokenUrl": "https://pluginlab.xairline.org/oauth/token"
+            "authorizationUrl": "https://auth.xairline.org/oidc/auth",
+            "tokenUrl": "https://auth.xairline.org/oidc/token"
         }
     }
 }`
