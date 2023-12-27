@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"context"
 	"github.com/xairline/x-gpt/controllers"
-	"github.com/xairline/x-gpt/middlewares"
 	"github.com/xairline/x-gpt/routes"
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
@@ -16,7 +15,6 @@ var Module = fx.Options(
 	routes.Module,
 	utils.Module,
 	services.Module,
-	middlewares.Module,
 	fx.Invoke(bootstrap),
 )
 
@@ -26,14 +24,12 @@ func bootstrap(
 	routes routes.Routes,
 	env utils.Env,
 	logger utils.Logger,
-	middlewares middlewares.Middlewares,
 ) {
 
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 
 			go func() {
-				middlewares.Setup()
 				routes.Setup()
 				host := "0.0.0.0"
 				handler.Gin.Run(host + ":" + env.ServerPort)

@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"context"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -9,7 +11,9 @@ import (
 
 // RequestHandler function
 type RequestHandler struct {
-	Gin *gin.Engine
+	Gin      *gin.Engine
+	Verifier *oidc.IDTokenVerifier
+	Context  context.Context
 }
 
 type ResponseError struct {
@@ -22,6 +26,14 @@ type ResponseOk struct {
 
 // NewRequestHandler creates a new request handler
 func NewRequestHandler(logger Logger, env Env) RequestHandler {
+	// Initialize OIDC provider
+	ctx := context.Background()
+	provider, err := oidc.NewProvider(ctx, env.OauthEndpoint)
+	if err != nil {
+		panic(err)
+	}
+	oidcVerifier := provider.Verifier(&oidc.Config{ClientID: env.OauthClientID, SkipClientIDCheck: true})
+
 	gin.DefaultWriter = logger.GetGinLogger()
 	engine := gin.New()
 
@@ -34,5 +46,9 @@ func NewRequestHandler(logger Logger, env Env) RequestHandler {
 		),
 	)
 
-	return RequestHandler{Gin: engine}
+	return RequestHandler{
+		Gin:      engine,
+		Verifier: oidcVerifier,
+		Context:  ctx,
+	}
 }

@@ -2,19 +2,25 @@ package utils
 
 import (
 	"github.com/spf13/viper"
+	"path/filepath"
+	"runtime"
 )
 
 // Env has environment stored
 type Env struct {
-	ServerPort string `mapstructure:"SERVER_PORT"`
-	JwtSecret  string `mapstructure:"JWT_SECRET"`
+	ServerPort    string `mapstructure:"SERVER_PORT"`
+	JwtSecret     string `mapstructure:"JWT_SECRET"`
+	OauthClientID string `mapstructure:"OAUTH_CLIENT_ID"`
+	OauthEndpoint string `mapstructure:"OAUTH_ENDPOINT"`
 }
 
 // NewEnv creates a new environment
 func NewEnv(log Logger) Env {
 
 	env := Env{}
-	viper.SetConfigFile(".env")
+	_, filename, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(filename)
+	viper.SetConfigFile(filepath.Join(dir, "..", ".env"))
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
