@@ -35,27 +35,27 @@ func (m *MockDatarefService) EXPECT() *MockDatarefServiceMockRecorder {
 }
 
 // GetValueByDatarefName mocks base method.
-func (m *MockDatarefService) GetValueByDatarefName(dataref, name string, precision *int8, isByteArray bool) models.DatarefValue {
+func (m *MockDatarefService) GetValueByDatarefName(clientId, dataref, name string, precision *int8, isByteArray bool) models.DatarefValue {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetValueByDatarefName", dataref, name, precision, isByteArray)
+	ret := m.ctrl.Call(m, "GetValueByDatarefName", clientId, dataref, name, precision, isByteArray)
 	ret0, _ := ret[0].(models.DatarefValue)
 	return ret0
 }
 
 // GetValueByDatarefName indicates an expected call of GetValueByDatarefName.
-func (mr *MockDatarefServiceMockRecorder) GetValueByDatarefName(dataref, name, precision, isByteArray interface{}) *gomock.Call {
+func (mr *MockDatarefServiceMockRecorder) GetValueByDatarefName(clientId, dataref, name, precision, isByteArray interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).GetValueByDatarefName), dataref, name, precision, isByteArray)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).GetValueByDatarefName), clientId, dataref, name, precision, isByteArray)
 }
 
 // SetValueByDatarefName mocks base method.
-func (m *MockDatarefService) SetValueByDatarefName(dataref string, value interface{}) {
+func (m *MockDatarefService) SetValueByDatarefName(clientId, dataref string, value interface{}) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetValueByDatarefName", dataref, value)
+	m.ctrl.Call(m, "SetValueByDatarefName", clientId, dataref, value)
 }
 
 // SetValueByDatarefName indicates an expected call of SetValueByDatarefName.
-func (mr *MockDatarefServiceMockRecorder) SetValueByDatarefName(dataref, value interface{}) *gomock.Call {
+func (mr *MockDatarefServiceMockRecorder) SetValueByDatarefName(clientId, dataref, value interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).SetValueByDatarefName), dataref, value)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).SetValueByDatarefName), clientId, dataref, value)
 }

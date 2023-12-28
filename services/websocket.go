@@ -4,6 +4,7 @@ package services
 
 import "C"
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/xairline/x-gpt/models"
@@ -19,6 +20,7 @@ var webSocketSvc WebSocketService
 type WebSocketService interface {
 	Upgrade(c *gin.Context, clientId string)
 	IsClientExist(clientId string) bool
+	SendWsMsgByClientId(clientId string, message string) error
 }
 
 type webSocketService struct {
@@ -80,4 +82,26 @@ func NewWebSocketService(logger utils.Logger) WebSocketService {
 		}
 		return webSocketSvc
 	}
+}
+
+func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) error {
+	// Lock the Hub for safe concurrent access
+	ws.Hub.Lock()
+	defer ws.Hub.Unlock()
+
+	// Iterate over all clients in the Hub
+	for client := range ws.Hub.Clients {
+		if client.Id == clientId {
+			// Found the client, send the message
+			select {
+			case client.Send <- []byte(message):
+				return nil // Message queued successfully
+			default:
+				return errors.New("failed to send message: channel is full")
+			}
+		}
+	}
+
+	// Client not found
+	return errors.New("client not found")
 }

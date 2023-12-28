@@ -72,7 +72,7 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 		return
 	}
 
-	res := u.datarefSvc.GetValueByDatarefName(dataref, alias, precision, c.GetBool("is_byte_array"))
+	res := u.datarefSvc.GetValueByDatarefName(clientId.(string), dataref, alias, precision, c.GetBool("is_byte_array"))
 	c.JSON(200, res)
 }
 
@@ -108,7 +108,7 @@ func (u DatarefController) SetDataref(c *gin.Context) {
 		c.JSON(500, utils.ResponseError{Message: err.Error()})
 		return
 	}
-	u.datarefSvc.SetValueByDatarefName(data.Request.Dataref, data.Request.Value)
+	u.datarefSvc.SetValueByDatarefName("TODO", data.Request.Dataref, data.Request.Value)
 }
 
 // SetDatarefs

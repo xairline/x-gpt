@@ -61,10 +61,11 @@ func TestGetDataref(t *testing.T) {
 		// Set up Gin
 		router := gin.Default()
 		env := utils.NewEnv(utils.NewLogger())
+		wsSvc := services.NewWebSocketService(utils.NewLogger())
 		dc := NewDatarefController(
 			utils.NewLogger(),
-			services.NewDatarefService(utils.NewLogger()),
-			services.NewWebSocketService(utils.NewLogger()),
+			services.NewDatarefService(utils.NewLogger(), wsSvc),
+			wsSvc,
 		)
 
 		// setup token verification
@@ -73,7 +74,7 @@ func TestGetDataref(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		oidcVerifier := provider.Verifier(&oidc.Config{ClientID: env.OauthClientID, SkipClientIDCheck: true})
+		oidcVerifier := provider.Verifier(&oidc.Config{ClientID: env.OauthClientID, SkipClientIDCheck: true, SkipExpiryCheck: true})
 
 		router.GET("/xplm/dataref", middlewares.OIDCMiddleware(context.Background(), oidcVerifier), dc.GetDataref)
 
@@ -112,7 +113,7 @@ func TestGetDataref(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error reading from WebSocket: %v", err)
 		}
-		assert.Equal(t, `{"dataref_str":"test","value":0,"alias":"test","precision":2,"is_byte_array":false}`, string(message))
+		assert.Equal(t, `action:GetDataref, dataref: test`, string(message))
 	})
 
 	t.Run("TestGetDataref_ValidTokenWithoutWebSocket", func(t *testing.T) {
@@ -132,7 +133,7 @@ func TestGetDataref(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		oidcVerifier := provider.Verifier(&oidc.Config{ClientID: env.OauthClientID, SkipClientIDCheck: true})
+		oidcVerifier := provider.Verifier(&oidc.Config{ClientID: env.OauthClientID, SkipClientIDCheck: true, SkipExpiryCheck: true})
 
 		router.GET("/xplm/dataref", middlewares.OIDCMiddleware(context.Background(), oidcVerifier), dc.GetDataref)
 

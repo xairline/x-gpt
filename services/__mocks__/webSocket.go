@@ -34,6 +34,34 @@ func (m *MockWebSocketService) EXPECT() *MockWebSocketServiceMockRecorder {
 	return m.recorder
 }
 
+// IsClientExist mocks base method.
+func (m *MockWebSocketService) IsClientExist(clientId string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsClientExist", clientId)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsClientExist indicates an expected call of IsClientExist.
+func (mr *MockWebSocketServiceMockRecorder) IsClientExist(clientId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsClientExist", reflect.TypeOf((*MockWebSocketService)(nil).IsClientExist), clientId)
+}
+
+// SendWsMsgByClientId mocks base method.
+func (m *MockWebSocketService) SendWsMsgByClientId(clientId, message string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendWsMsgByClientId", clientId, message)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendWsMsgByClientId indicates an expected call of SendWsMsgByClientId.
+func (mr *MockWebSocketServiceMockRecorder) SendWsMsgByClientId(clientId, message interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendWsMsgByClientId", reflect.TypeOf((*MockWebSocketService)(nil).SendWsMsgByClientId), clientId, message)
+}
+
 // Upgrade mocks base method.
 func (m *MockWebSocketService) Upgrade(c *gin.Context, clientId string) {
 	m.ctrl.T.Helper()
