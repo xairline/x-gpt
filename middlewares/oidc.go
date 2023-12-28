@@ -19,11 +19,14 @@ func OIDCMiddleware(ctx context.Context, oidcVerifier *oidc.IDTokenVerifier) gin
 		}
 
 		// Verify the token
-		_, err := oidcVerifier.Verify(ctx, rawToken)
+		parsedToken, err := oidcVerifier.Verify(ctx, rawToken)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 			return
 		}
+
+		// Add the token to the context
+		c.Set("clientId", parsedToken.Subject)
 
 		// Token is valid; proceed with the request
 		c.Next()

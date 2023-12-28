@@ -9,7 +9,6 @@ import (
 // Env has environment stored
 type Env struct {
 	ServerPort    string `mapstructure:"SERVER_PORT"`
-	JwtSecret     string `mapstructure:"JWT_SECRET"`
 	OauthClientID string `mapstructure:"OAUTH_CLIENT_ID"`
 	OauthEndpoint string `mapstructure:"OAUTH_ENDPOINT"`
 }

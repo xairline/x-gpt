@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/xairline/x-gpt/controllers"
-	"github.com/xairline/x-gpt/middlewares"
 	"github.com/xairline/x-gpt/utils"
 )
 
@@ -20,7 +19,6 @@ func (s WebSocketRoutes) Setup() {
 	api := s.handler.Gin.Group("/apis")
 	{
 		api.GET("/ws", s.webSocketController.Upgrade)
-		api.GET("/ws/token", middlewares.OIDCMiddleware(s.handler.Context, s.handler.Verifier), s.webSocketController.GetConnectionToken)
 	}
 }
 

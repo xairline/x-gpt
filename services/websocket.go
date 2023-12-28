@@ -18,6 +18,7 @@ var webSocketSvc WebSocketService
 
 type WebSocketService interface {
 	Upgrade(c *gin.Context, clientId string)
+	IsClientExist(clientId string) bool
 }
 
 type webSocketService struct {
@@ -52,6 +53,15 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 
 	go client.WritePump()
 	go client.ReadPump()
+}
+
+func (ws webSocketService) IsClientExist(clientId string) bool {
+	for client := range ws.Hub.Clients {
+		if client.Id == clientId {
+			return true
+		}
+	}
+	return false
 }
 
 func NewWebSocketService(logger utils.Logger) WebSocketService {

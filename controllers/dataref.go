@@ -4,21 +4,28 @@ import (
 	"github.com/xairline/x-gpt/models"
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // DatarefController data type
 type DatarefController struct {
-	logger     utils.Logger
-	datarefSvc services.DatarefService
+	logger           utils.Logger
+	datarefSvc       services.DatarefService
+	webSocketService services.WebSocketService
 }
 
 // NewDatarefController creates new Dataref controller
-func NewDatarefController(logger utils.Logger, datarefSvc services.DatarefService) DatarefController {
+func NewDatarefController(
+	logger utils.Logger,
+	datarefSvc services.DatarefService,
+	webSocketService services.WebSocketService,
+) DatarefController {
 	return DatarefController{
-		logger:     logger,
-		datarefSvc: datarefSvc,
+		logger:           logger,
+		datarefSvc:       datarefSvc,
+		webSocketService: webSocketService,
 	}
 }
 
@@ -51,6 +58,20 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 	precisionInt := c.GetInt("precision")
 	precisionInt8 := int8(precisionInt)
 	precision = &(precisionInt8)
+
+	// check hub if we have an active connection
+	// Retrieve the value from the context
+	clientId, exists := c.Get("clientId")
+	if !exists {
+		// Handle the case where "clientId" is not set
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "client ID not found"})
+		return
+	}
+	if !u.webSocketService.IsClientExist(clientId.(string)) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "X Plane not connected"})
+		return
+	}
+
 	res := u.datarefSvc.GetValueByDatarefName(dataref, alias, precision, c.GetBool("is_byte_array"))
 	c.JSON(200, res)
 }
