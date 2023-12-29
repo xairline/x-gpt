@@ -54,24 +54,6 @@ func (h *Hub) Run() {
 	}
 }
 
-func (c *Client) ReadPump() {
-	defer func() {
-		c.Hub.Unregister <- c
-		c.Conn.Close()
-	}()
-	for {
-		_, message, err := c.Conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				c.Logger.Errorf("error: %v", err)
-			}
-			break
-		}
-		c.Logger.Infof("Client %s received: %s", c.Id, message)
-		c.Send <- message
-	}
-}
-
 func (c *Client) WritePump() {
 	defer func() {
 		c.Conn.Close()

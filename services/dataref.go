@@ -5,6 +5,7 @@ package services
 import "C"
 import (
 	_ "embed"
+	"encoding/json"
 	"github.com/xairline/x-gpt/models"
 	"github.com/xairline/x-gpt/utils"
 	"sync"
@@ -29,8 +30,16 @@ func (d datarefService) SetValueByDatarefName(clientId string, dataref string, v
 }
 
 func (d datarefService) GetValueByDatarefName(clientId, dataref, name string, precision *int8, isByteArray bool) models.DatarefValue {
-	_ = d.WebSocketService.SendWsMsgByClientId(clientId, "action:GetDataref, dataref: "+dataref)
-	return models.DatarefValue{}
+	datarefObj := models.Dataref{
+		Name:         dataref,
+		Precision:    *precision,
+		IsBytesArray: isByteArray,
+	}
+	datarefBytes, _ := json.Marshal(datarefObj)
+	message, _ := d.WebSocketService.SendWsMsgByClientId(clientId, "GetDataref|"+string(datarefBytes))
+	res := models.DatarefValue{}
+	json.Unmarshal([]byte(message), &res)
+	return res
 }
 
 func NewDatarefService(logger utils.Logger, webSocketService WebSocketService) DatarefService {

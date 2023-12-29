@@ -2,7 +2,7 @@ package models
 
 type Dataref struct {
 	Name         string `yaml:"name"`
-	DatarefStr   string `yaml:"value"`
+	Value        string `yaml:"value"`
 	Precision    int8   `yaml:"precision,omitempty"`
 	IsBytesArray bool   `yaml:"isBytesArray,omitempty"`
 }

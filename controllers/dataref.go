@@ -5,6 +5,7 @@ import (
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,10 +55,12 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 		alias = dataref
 	}
 
-	var precision *int8
-	precisionInt := c.GetInt("precision")
-	precisionInt8 := int8(precisionInt)
-	precision = &(precisionInt8)
+	precisionInt, success := c.GetQuery("precision")
+	if !success {
+		precisionInt = "0"
+	}
+	precisionTmp, _ := strconv.Atoi(precisionInt)
+	precision := int8(precisionTmp)
 
 	// check hub if we have an active connection
 	// Retrieve the value from the context
@@ -72,7 +75,7 @@ func (u DatarefController) GetDataref(c *gin.Context) {
 		return
 	}
 
-	res := u.datarefSvc.GetValueByDatarefName(clientId.(string), dataref, alias, precision, c.GetBool("is_byte_array"))
+	res := u.datarefSvc.GetValueByDatarefName(clientId.(string), dataref, alias, &precision, c.GetBool("is_byte_array"))
 	c.JSON(200, res)
 }
 

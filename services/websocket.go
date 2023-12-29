@@ -20,7 +20,7 @@ var webSocketSvc WebSocketService
 type WebSocketService interface {
 	Upgrade(c *gin.Context, clientId string)
 	IsClientExist(clientId string) bool
-	SendWsMsgByClientId(clientId string, message string) error
+	SendWsMsgByClientId(clientId string, message string) (string, error)
 }
 
 type webSocketService struct {
@@ -54,7 +54,7 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 	client.Hub.Register <- client
 
 	go client.WritePump()
-	go client.ReadPump()
+	//go client.ReadPump()
 }
 
 func (ws webSocketService) IsClientExist(clientId string) bool {
@@ -84,7 +84,7 @@ func NewWebSocketService(logger utils.Logger) WebSocketService {
 	}
 }
 
-func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) error {
+func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) (string, error) {
 	// Lock the Hub for safe concurrent access
 	ws.Hub.Lock()
 	defer ws.Hub.Unlock()
@@ -95,13 +95,25 @@ func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) 
 			// Found the client, send the message
 			select {
 			case client.Send <- []byte(message):
-				return nil // Message queued successfully
+				for {
+					_, message, err := client.Conn.ReadMessage()
+					if err != nil {
+						if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+							client.Logger.Errorf("error: %v", err)
+						}
+						break
+					}
+					if len(message) > 0 {
+						return string(message), nil
+					}
+				}
+				break
 			default:
-				return errors.New("failed to send message: channel is full")
+				return "", errors.New("failed to send message: channel is full")
 			}
 		}
 	}
 
 	// Client not found
-	return errors.New("client not found")
+	return "", errors.New("client not found")
 }
