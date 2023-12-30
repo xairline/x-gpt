@@ -17,6 +17,7 @@ var datarefSvc DatarefService
 type DatarefService interface {
 	GetValueByDatarefName(clientId string, dataref, name string, precision *int8, isByteArray bool) models.DatarefValue
 	SetValueByDatarefName(clientId string, dataref string, value interface{})
+	SendCommand(clientId string, command string)
 }
 
 type datarefService struct {
@@ -25,7 +26,17 @@ type datarefService struct {
 }
 
 func (d datarefService) SetValueByDatarefName(clientId string, dataref string, value interface{}) {
-	// find websocket client and forward request
+	datarefObj := models.SetDatarefValue{
+		Dataref: dataref,
+		Value:   value,
+	}
+	datarefBytes, _ := json.Marshal(datarefObj)
+	d.WebSocketService.SendWsMsgByClientId(clientId, "SetDataref|"+string(datarefBytes))
+	return
+}
+
+func (d datarefService) SendCommand(clientId string, cmd string) {
+	d.WebSocketService.SendWsMsgByClientId(clientId, "SendCommand|"+cmd)
 	return
 }
 

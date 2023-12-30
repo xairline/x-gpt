@@ -57,16 +57,8 @@ func TestUpgrade(tt *testing.T) {
 			tt.Fatalf("Could not send message over ws connection %v", err)
 		}
 
-		// Read the response from the WebSocket server
-		messageType, responseMessage, err := ws.ReadMessage()
-		if err != nil {
-			tt.Fatalf("Could not read message from ws connection %v", err)
-		}
-
 		// Assertions and additional tests
 		assert.NotNil(tt, ws)
-		assert.Equal(tt, websocket.TextMessage, messageType)
-		assert.GreaterOrEqual(tt, len(string(responseMessage)), 0) // Replace with your expected response
 	})
 
 	tt.Run("InvalidToken", func(t *testing.T) {

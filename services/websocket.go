@@ -104,6 +104,7 @@ func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) 
 						break
 					}
 					if len(message) > 0 {
+						ws.Logger.Infof("Client: %s, received: %s", clientId, message)
 						return string(message), nil
 					}
 				}

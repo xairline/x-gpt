@@ -87,8 +87,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/ws/token": {
-            "get": {
+        "/xplm/command": {
+            "put": {
                 "security": [
                     {
                         "Oauth2Application": [
@@ -103,21 +103,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Web Socket"
+                    "Dataref"
                 ],
-                "summary": "Get Token for WebSocket connection",
+                "summary": "Send command to X Plane",
+                "parameters": [
+                    {
+                        "description": "xplane command",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SendCommandReq"
+                        }
+                    }
+                ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseOk"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseError"
-                        }
+                    "501": {
+                        "description": "Not Implemented"
                     }
                 }
             }
@@ -304,6 +306,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {}
+            }
+        },
+        "models.SendCommandReq": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string"
+                }
             }
         },
         "models.SetDatarefValue": {

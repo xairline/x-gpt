@@ -16,12 +16,12 @@ type DatarefRoutes struct {
 // Setup Dataref routes
 func (s DatarefRoutes) Setup() {
 	s.logger.Info("Setting up routes")
-	api := s.handler.Gin.Group("/apis/xplm/dataref")
+	api := s.handler.Gin.Group("/apis/xplm")
 	api.Use(middlewares.OIDCMiddleware(s.handler.Context, s.handler.Verifier))
 	{
-		api.GET("", s.datarefController.GetDataref)
-		api.PUT("", s.datarefController.SetDataref)
-
+		api.GET("/dataref", s.datarefController.GetDataref)
+		api.PUT("/dataref", s.datarefController.SetDataref)
+		api.PUT("/command", s.datarefController.SendCommand)
 	}
 }
 

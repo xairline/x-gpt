@@ -49,11 +49,12 @@ func (mr *MockWebSocketServiceMockRecorder) IsClientExist(clientId interface{}) 
 }
 
 // SendWsMsgByClientId mocks base method.
-func (m *MockWebSocketService) SendWsMsgByClientId(clientId, message string) error {
+func (m *MockWebSocketService) SendWsMsgByClientId(clientId, message string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendWsMsgByClientId", clientId, message)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SendWsMsgByClientId indicates an expected call of SendWsMsgByClientId.

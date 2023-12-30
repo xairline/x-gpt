@@ -16,6 +16,11 @@ definitions:
         type: string
       value: {}
     type: object
+  models.SendCommandReq:
+    properties:
+      command:
+        type: string
+    type: object
   models.SetDatarefValue:
     properties:
       dataref:
@@ -71,27 +76,28 @@ paths:
       summary: Get version of GPT X-Plane plugin
       tags:
       - Misc
-  /ws/token:
-    get:
+  /xplm/command:
+    put:
       consumes:
       - application/json
+      parameters:
+      - description: xplane command
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SendCommandReq'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ResponseOk'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ResponseError'
+        "501":
+          description: Not Implemented
       security:
       - Oauth2Application:
         - ""
-      summary: Get Token for WebSocket connection
+      summary: Send command to X Plane
       tags:
-      - Web Socket
+      - Dataref
   /xplm/dataref:
     get:
       consumes:

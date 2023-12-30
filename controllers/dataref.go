@@ -103,7 +103,7 @@ func (u DatarefController) GetDatarefs(c *gin.Context) {
 // @Security Oauth2Application[]
 func (u DatarefController) SetDataref(c *gin.Context) {
 	// get dataref and value
-	var data models.SetDatarefValueReq
+	var data models.SetDatarefValue
 	err := c.BindJSON(&data)
 	u.logger.Infof("dataref: %+v", data)
 	if err != nil {
@@ -111,7 +111,19 @@ func (u DatarefController) SetDataref(c *gin.Context) {
 		c.JSON(500, utils.ResponseError{Message: err.Error()})
 		return
 	}
-	u.datarefSvc.SetValueByDatarefName("TODO", data.Request.Dataref, data.Request.Value)
+	// check hub if we have an active connection
+	// Retrieve the value from the context
+	clientId, exists := c.Get("clientId")
+	if !exists {
+		// Handle the case where "clientId" is not set
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "client ID not found"})
+		return
+	}
+	if !u.webSocketService.IsClientExist(clientId.(string)) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "X Plane not connected"})
+		return
+	}
+	u.datarefSvc.SetValueByDatarefName(clientId.(string), data.Dataref, data.Value)
 }
 
 // SetDatarefs
@@ -124,4 +136,38 @@ func (u DatarefController) SetDataref(c *gin.Context) {
 // @Security Oauth2Application[]
 func (u DatarefController) SetDatarefs(c *gin.Context) {
 	c.JSON(501, "not implemented")
+}
+
+// SendCommand
+// @Summary  Send command to X Plane
+// @Tags     Dataref
+// @Param    request body models.SendCommandReq true "xplane command"
+// @Accept   json
+// @Produce  json
+// @Failure  501  "Not Implemented"
+// @Router   /xplm/command [put]
+// @Security Oauth2Application[]
+func (u DatarefController) SendCommand(c *gin.Context) {
+	// get dataref and value
+	var data models.SendCommandReq
+	err := c.BindJSON(&data)
+	u.logger.Infof("command: %+v", data)
+	if err != nil {
+		u.logger.Errorf("command: %+v", err)
+		c.JSON(500, utils.ResponseError{Message: err.Error()})
+		return
+	}
+	// check hub if we have an active connection
+	// Retrieve the value from the context
+	clientId, exists := c.Get("clientId")
+	if !exists {
+		// Handle the case where "clientId" is not set
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "client ID not found"})
+		return
+	}
+	if !u.webSocketService.IsClientExist(clientId.(string)) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "X Plane not connected"})
+		return
+	}
+	u.datarefSvc.SendCommand(clientId.(string), data.Command)
 }

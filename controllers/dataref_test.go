@@ -5,6 +5,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gorilla/websocket"
 	"github.com/xairline/x-gpt/middlewares"
+	"github.com/xairline/x-gpt/models"
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
 	"net/http"
@@ -61,12 +62,16 @@ func TestGetDataref(t *testing.T) {
 		// Set up Gin
 		router := gin.Default()
 		env := utils.NewEnv(utils.NewLogger())
-		wsSvc := services.NewWebSocketService(utils.NewLogger())
+		wsSvc := mocks.NewMockWebSocketService(mockCtrl)
+		drSvc := mocks.NewMockDatarefService(mockCtrl)
 		dc := NewDatarefController(
 			utils.NewLogger(),
-			services.NewDatarefService(utils.NewLogger(), wsSvc),
+			drSvc,
 			wsSvc,
 		)
+		wsSvc.EXPECT().IsClientExist(gomock.Any()).Return(true)
+		//wsSvc.EXPECT().SendWsMsgByClientId(gomock.Any(), gomock.Any()).Return("success", nil)
+		drSvc.EXPECT().GetValueByDatarefName(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(models.DatarefValue{})
 
 		// setup token verification
 		ctx := context.Background()
@@ -108,12 +113,6 @@ func TestGetDataref(t *testing.T) {
 
 		// Assert status code and response
 		assert.Equal(t, http.StatusOK, w.Code)
-		// Receive a message from the WebSocket connection
-		_, message, err := ws.ReadMessage()
-		if err != nil {
-			t.Fatalf("Error reading from WebSocket: %v", err)
-		}
-		assert.Equal(t, `action:GetDataref, dataref: test`, string(message))
 	})
 
 	t.Run("TestGetDataref_ValidTokenWithoutWebSocket", func(t *testing.T) {
@@ -121,11 +120,14 @@ func TestGetDataref(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 		mockService := mocks.NewMockDatarefService(mockCtrl)
+		//mockService.EXPECT().GetValueByDatarefName(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(models.DatarefValue{})
 
 		// Set up Gin
 		router := gin.Default()
 		env := utils.NewEnv(utils.NewLogger())
-		dc := NewDatarefController(utils.NewLogger(), mockService, services.NewWebSocketService(utils.NewLogger()))
+		wsMock := mocks.NewMockWebSocketService(mockCtrl)
+		wsMock.EXPECT().IsClientExist(gomock.Any()).Return(false)
+		dc := NewDatarefController(utils.NewLogger(), mockService, wsMock)
 
 		// setup token verification
 		ctx := context.Background()

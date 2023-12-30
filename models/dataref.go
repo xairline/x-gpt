@@ -17,4 +17,7 @@ type SetDatarefValue struct {
 type SetDatarefValueReq struct {
 	Request SetDatarefValue `json:"request" `
 }
+type SendCommandReq struct {
+	Command string `json:"command" `
+}
 type DatarefValues map[string]DatarefValue

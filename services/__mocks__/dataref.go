@@ -48,6 +48,18 @@ func (mr *MockDatarefServiceMockRecorder) GetValueByDatarefName(clientId, datare
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValueByDatarefName", reflect.TypeOf((*MockDatarefService)(nil).GetValueByDatarefName), clientId, dataref, name, precision, isByteArray)
 }
 
+// SendCommand mocks base method.
+func (m *MockDatarefService) SendCommand(clientId, command string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendCommand", clientId, command)
+}
+
+// SendCommand indicates an expected call of SendCommand.
+func (mr *MockDatarefServiceMockRecorder) SendCommand(clientId, command interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCommand", reflect.TypeOf((*MockDatarefService)(nil).SendCommand), clientId, command)
+}
+
 // SetValueByDatarefName mocks base method.
 func (m *MockDatarefService) SetValueByDatarefName(clientId, dataref string, value interface{}) {
 	m.ctrl.T.Helper()
