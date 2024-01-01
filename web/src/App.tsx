@@ -6,7 +6,6 @@ import {Button, Col, ConfigProvider, Image, Layout, MenuProps, Row, Typography} 
 import UserInfo from "./components/UserInfo";
 import {Route, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import {Header} from "antd/es/layout/layout";
 import type {SelectProps} from 'antd/es/select';
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import {useLogto, UserInfoResponse} from '@logto/react';
@@ -44,33 +43,47 @@ const App: React.FC = () => {
         <ConfigProvider
             theme={{
                 token: {
-                    colorPrimary: '#00b96b',
+                    colorPrimary: '#006363'
                 },
             }}
         >
             <Layout className="layout app">
-                {!screens.sm ? <></> : <Header style={{
-                    alignItems: 'center',
-                    display: "flex",
-                    height: !screens.xxl ? "10vh" : "12vh",
+                {!screens.sm ? <></> :
+                    <Row style={{background: "#006363"}}>
+                        <Col flex={"auto"}>
+                            <Row style={{
+                                display: "flex",
+                                height: "100%",
+                            }}>
+                                <Image src={"logo512.png"}
+                                       style={{maxHeight: "8vh", objectFit: "contain", margin: "12px 24px 12px"}}>
+                                </Image>
 
-                }}>
-                    <Col span={2}>
-                        <div className="demo-logo">
-                            <Image src={"logo512.png"} style={{maxHeight: "6vh"}}/>
-                        </div>
-                    </Col>
-                    <Col span={screens.lg ? 16 : 14}>
-                        <Col span={19} offset={8}>
-                            <Title level={1} style={{color: "white"}}>
+                            </Row>
+                        </Col>
+                        <Col flex={"auto"}>
+                            <Title level={1} style={{
+                                color: "white", display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "100%",
+                            }}>
                                 X Airline
                             </Title>
                         </Col>
-                    </Col>
-                    <Col flex={"auto"}>
-                        <UserInfo/>
-                    </Col>
-                </Header>}
+                        <Col flex={"auto"}>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                alignItems: "center",
+                                height: "100%",
+                                marginRight: "24px",
+                            }}>
+                                <UserInfo/>
+                            </div>
+                        </Col>
+                    </Row>
+                }
 
                 <Layout>
                     <Content

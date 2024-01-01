@@ -24,25 +24,33 @@ const UserInfo: React.FC<Props> = (props) => {
     }, [isAuthenticated, fetchUserInfo]);
 
     return ((
-        <Row>
+        <Row style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        }}>
             {userMetadata && isAuthenticated ? (
                 <Row style={{
                     background: "white",
                     // paddingLeft: "12px",
                     // paddingRight: "16px",
-                    borderRadius: "24px",
+                    borderRadius: "48px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "4vh",
                 }}>
                     <Col span={3} offset={1}>
-                        <Avatar src={"https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"}
+                        <Avatar src={userMetadata.picture}
                                 size={36}
                                 style={{marginRight: "12px"}}/>
                     </Col>
-                    <Col span={14} offset={1}>
+                    <Col span={12} offset={1}>
                         <div style={{
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                            width: screens.lg ? "300px" : "200px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
                         }}>
                             <Text style={{
                                 overflow: "hidden",
@@ -50,27 +58,29 @@ const UserInfo: React.FC<Props> = (props) => {
                                 textOverflow: "ellipsis",
                                 width: "100%",
                             }}>
-                                {userMetadata.email}
+                                {userMetadata.name}
                             </Text>
                         </div>
                     </Col>
-                    <Col span={4}>
-                        <Button onClick={() => signOut(`${window.location.origin}/`)}><LogoutOutlined/>
-                        </Button>
+                    <Col span={7}>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                        }}>
+                            <Button onClick={() => signOut(`${window.location.origin}/`)}
+                                    style={{borderRadius: "30%"}}><LogoutOutlined/>
+                            </Button>
+                        </div>
                     </Col>
 
 
                 </Row>
             ) : (
-                <>
-                    <Col span={8}></Col>
-                    <Col span={8}></Col>
-                    <Col span={8}>
-                        <Button
-                            onClick={() => signIn(`${window.location.origin}/callback`)}>Sign In
-                        </Button>
-                    </Col>
-                </>
+                <Button
+                    onClick={() => signIn(`${window.location.origin}/callback`)}>Sign In
+                </Button>
             )
             }
         </Row>

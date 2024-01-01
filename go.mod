@@ -4,7 +4,6 @@ go 1.21.0
 
 require (
 	github.com/coreos/go-oidc/v3 v3.9.0
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/websocket v1.5.1
