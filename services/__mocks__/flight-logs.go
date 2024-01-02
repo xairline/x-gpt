@@ -7,7 +7,9 @@ package mocks
 import (
 	reflect "reflect"
 
+	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
+	models "github.com/xairline/x-gpt/models"
 )
 
 // MockFlightLogsService is a mock of FlightLogsService interface.
@@ -33,6 +35,18 @@ func (m *MockFlightLogsService) EXPECT() *MockFlightLogsServiceMockRecorder {
 	return m.recorder
 }
 
+// GetFlightLogs mocks base method.
+func (m *MockFlightLogsService) GetFlightLogs(c *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "GetFlightLogs", c)
+}
+
+// GetFlightLogs indicates an expected call of GetFlightLogs.
+func (mr *MockFlightLogsServiceMockRecorder) GetFlightLogs(c interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFlightLogs", reflect.TypeOf((*MockFlightLogsService)(nil).GetFlightLogs), c)
+}
+
 // GetLastSyncedLocalIdByUsername mocks base method.
 func (m *MockFlightLogsService) GetLastSyncedLocalIdByUsername(username string) (int, error) {
 	m.ctrl.T.Helper()
@@ -46,4 +60,16 @@ func (m *MockFlightLogsService) GetLastSyncedLocalIdByUsername(username string) 
 func (mr *MockFlightLogsServiceMockRecorder) GetLastSyncedLocalIdByUsername(username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastSyncedLocalIdByUsername", reflect.TypeOf((*MockFlightLogsService)(nil).GetLastSyncedLocalIdByUsername), username)
+}
+
+// SaveFlightStatuses mocks base method.
+func (m *MockFlightLogsService) SaveFlightStatuses(statuses []models.FlightStatus) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SaveFlightStatuses", statuses)
+}
+
+// SaveFlightStatuses indicates an expected call of SaveFlightStatuses.
+func (mr *MockFlightLogsServiceMockRecorder) SaveFlightStatuses(statuses interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveFlightStatuses", reflect.TypeOf((*MockFlightLogsService)(nil).SaveFlightStatuses), statuses)
 }

@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
-	"time"
 )
 
 var webSocketSvcLock = &sync.Mutex{}
@@ -69,8 +68,7 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 			}
 			if response == "SyncFlightLogs|Done" {
 				ws.Logger.Infof("Synced flight logs for client: %s", clientId)
-				time.Sleep(15 * time.Second)
-				continue
+				break
 			}
 			var flightStatuses, syncedFlightStatuses []models.FlightStatus
 			json.Unmarshal([]byte(response), &flightStatuses)
