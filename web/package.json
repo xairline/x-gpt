@@ -20,12 +20,14 @@
     "axios": "^0.23.0",
     "date-holidays": "^3.19.2",
     "dayjs": "^1.11.7",
+    "deck.gl": "^8.9.33",
     "mobx": "^6.11.0",
     "mobx-react": "^9.1.0",
     "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-map-gl": "^7.1.0",
     "react-router-dom": "^6.7.0",
     "react-scripts": "5.0.1",
     "react-to-print": "^2.14.12",
@@ -58,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@deck.gl/geo-layers": "^8.9.33",
     "@types/react-router-dom": "^5.3.3"
   }
 }
