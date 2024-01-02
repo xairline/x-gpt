@@ -1,9 +1,8 @@
 import React from 'react';
 import DeckGL from '@deck.gl/react/typed';
-import Map from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {useObserver} from 'mobx-react-lite';
-import {TerrainLayer} from "@deck.gl/geo-layers/typed";
+import Map from 'react-map-gl';
 // import {inFlowColors, outFlowColors} from '../../../store/flight-log';
 // import {useStores} from 'apps/xws/src/store';
 // Set your mapbox access token here
@@ -41,7 +40,7 @@ export function MapArch(props: MapArchProps) {
     ARR: ${info.ArrivalFlightInfo?.AirportId} - ${info.ArrivalFlightInfo?.AirportName}`;
         }
 
-        const layers = [
+        const layers: any[] = [
             // new ArcLayer({
             //   id: 'arc',
             //   data: FlightLogStore.mapDataSet.arch as any,
@@ -53,17 +52,17 @@ export function MapArch(props: MapArchProps) {
             //     (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile] as any,
             //   getWidth: 3,
             // }),
-            new TerrainLayer({
-                id: 'terrain',
-                minZoom: 0,
-                maxZoom: 23,
-                strategy: 'no-overlap',
-                elevationDecoder: ELEVATION_DECODER,
-                elevationData: TERRAIN_IMAGE,
-                texture: SURFACE_IMAGE,
-                wireframe: false,
-                color: [255, 255, 255]
-            })
+            // new TerrainLayer({
+            //     id: 'terrain',
+            //     minZoom: 0,
+            //     maxZoom: 23,
+            //     strategy: 'no-overlap',
+            //     elevationDecoder: ELEVATION_DECODER,
+            //     elevationData: TERRAIN_IMAGE,
+            //     texture: SURFACE_IMAGE,
+            //     wireframe: false,
+            //     color: [255, 255, 255]
+            // })
         ];
         const INITIAL_VIEW_STATE = {
             // longitude:
@@ -90,11 +89,11 @@ export function MapArch(props: MapArchProps) {
                 height={'100%'}
                 getTooltip={getTooltip}
             >
-                {/*<Map*/}
-                {/*    // mapStyle="mapbox://styles/mapbox/satellite-streets-v12"*/}
-                {/*    mapboxAccessToken={MAPBOX_ACCESS_TOKEN}*/}
-                {/*>*/}
-                {/*</Map>*/}
+                <Map
+                    mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+                    mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+                >
+                </Map>
             </DeckGL>
         );
     });

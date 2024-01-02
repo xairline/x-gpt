@@ -11,9 +11,9 @@ import (
 
 // Module exported for initializing application
 var Module = fx.Options(
+	utils.Module,
 	controllers.Module,
 	routes.Module,
-	utils.Module,
 	services.Module,
 	fx.Invoke(bootstrap),
 )

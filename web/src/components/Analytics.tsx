@@ -5,6 +5,7 @@ import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import {Link} from "react-router-dom";
 import {InfoCircleOutlined} from "@ant-design/icons";
 import {ColumnsType} from 'antd/es/table';
+import Landing from "./landing";
 
 
 interface Props {
@@ -213,11 +214,13 @@ const Analytics: React.FC<Props> = (props) => {
                     pagination={
                         {
                             pageSize: 10,
-
                         }
                     }
                     size={"small"}
                 />
+            </Col>
+            <Col span={24}>
+                <Landing size={"small"}/>
             </Col>
         </Row>
 

@@ -7,6 +7,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/xairline/x-gpt/docs"
+	"github.com/xairline/x-gpt/middlewares"
 )
 
 // RequestHandler function
@@ -45,6 +46,7 @@ func NewRequestHandler(logger Logger, env Env) RequestHandler {
 			ginSwagger.DocExpansion("none"),
 		),
 	)
+	engine.Use(middlewares.CORSMiddleware())
 
 	return RequestHandler{
 		Gin:      engine,

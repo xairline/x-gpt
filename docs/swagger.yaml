@@ -16,6 +16,136 @@ definitions:
         type: string
       value: {}
     type: object
+  models.FlightInfo:
+    properties:
+      airportId:
+        type: string
+      airportName:
+        type: string
+      fuelWeight:
+        type: number
+      time:
+        type: number
+      totalWeight:
+        type: number
+    type: object
+  models.FlightState:
+    enum:
+    - parked
+    - taxi_out
+    - takeoff
+    - climb
+    - cruise
+    - descend
+    - landing
+    - taxi_in
+    type: string
+    x-enum-varnames:
+    - FlightStateParked
+    - FlightStateTaxiOut
+    - FlightStateTakeoff
+    - FlightStateClimb
+    - FlightStateCruise
+    - FlightStateDescend
+    - FlightStateLanding
+    - FlightStateTaxiIn
+  models.FlightStatus:
+    properties:
+      aircraftDisplayName:
+        type: string
+      aircraftICAO:
+        type: string
+      arrivalFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      createdAt:
+        type: string
+      departureFlightInfo:
+        $ref: '#/definitions/models.FlightInfo'
+      events:
+        items:
+          $ref: '#/definitions/models.FlightStatusEvent'
+        type: array
+      id:
+        type: integer
+      locations:
+        items:
+          $ref: '#/definitions/models.FlightStatusLocation'
+        type: array
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  models.FlightStatusEvent:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      details:
+        type: string
+      eventType:
+        $ref: '#/definitions/models.FlightStatusEventType'
+      flightId:
+        type: integer
+      id:
+        type: integer
+      timestamp:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  models.FlightStatusEventType:
+    enum:
+    - event:state
+    - event:location
+    - event:violation
+    type: string
+    x-enum-varnames:
+    - StateEvent
+    - LocationEvent
+    - ViolationEvent
+  models.FlightStatusLocation:
+    properties:
+      agl:
+        type: number
+      altitude:
+        type: number
+      createdAt:
+        type: string
+      flapRatio:
+        type: number
+      flightId:
+        type: integer
+      fuel:
+        type: number
+      gearForce:
+        type: number
+      gforce:
+        type: number
+      gs:
+        type: number
+      heading:
+        type: number
+      ias:
+        type: number
+      id:
+        type: integer
+      lat:
+        type: number
+      lng:
+        type: number
+      pitch:
+        type: number
+      state:
+        $ref: '#/definitions/models.FlightState'
+      timestamp:
+        type: number
+      updatedAt:
+        type: string
+      vs:
+        type: number
+    type: object
   models.SendCommandReq:
     properties:
       command:
@@ -30,6 +160,69 @@ definitions:
 info:
   contact: {}
 paths:
+  /flight-logs:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: specify if it's overview
+        in: query
+        name: isOverview
+        type: string
+      - description: departure airport
+        in: query
+        name: departureAirportId
+        type: string
+      - description: arrival airport
+        in: query
+        name: arrivalAirportId
+        type: string
+      - description: aircraft ICAO
+        in: query
+        name: aircraftICAO
+        type: string
+      - description: xplane or xws
+        in: query
+        name: source
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FlightStatus'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseError'
+      summary: Get a list of FlightLogs
+      tags:
+      - Flight_Logs
+  /flight-logs/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id of a flight log item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FlightStatus'
+        "404":
+          description: Not Found
+      summary: Get one FlightLog
+      tags:
+      - Flight_Logs
   /liveness:
     get:
       consumes:

@@ -15,6 +15,103 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/flight-logs": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get a list of FlightLogs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "specify if it's overview",
+                        "name": "isOverview",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "departure airport",
+                        "name": "departureAirportId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "arrival airport",
+                        "name": "arrivalAirportId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "aircraft ICAO",
+                        "name": "aircraftICAO",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "xplane or xws",
+                        "name": "source",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.FlightStatus"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/flight-logs/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight_Logs"
+                ],
+                "summary": "Get one FlightLog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of a flight log item",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.FlightStatus"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/liveness": {
             "get": {
                 "consumes": [
@@ -306,6 +403,194 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {}
+            }
+        },
+        "models.FlightInfo": {
+            "type": "object",
+            "properties": {
+                "airportId": {
+                    "type": "string"
+                },
+                "airportName": {
+                    "type": "string"
+                },
+                "fuelWeight": {
+                    "type": "number"
+                },
+                "time": {
+                    "type": "number"
+                },
+                "totalWeight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.FlightState": {
+            "type": "string",
+            "enum": [
+                "parked",
+                "taxi_out",
+                "takeoff",
+                "climb",
+                "cruise",
+                "descend",
+                "landing",
+                "taxi_in"
+            ],
+            "x-enum-varnames": [
+                "FlightStateParked",
+                "FlightStateTaxiOut",
+                "FlightStateTakeoff",
+                "FlightStateClimb",
+                "FlightStateCruise",
+                "FlightStateDescend",
+                "FlightStateLanding",
+                "FlightStateTaxiIn"
+            ]
+        },
+        "models.FlightStatus": {
+            "type": "object",
+            "properties": {
+                "aircraftDisplayName": {
+                    "type": "string"
+                },
+                "aircraftICAO": {
+                    "type": "string"
+                },
+                "arrivalFlightInfo": {
+                    "$ref": "#/definitions/models.FlightInfo"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "departureFlightInfo": {
+                    "$ref": "#/definitions/models.FlightInfo"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FlightStatusEvent"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FlightStatusLocation"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FlightStatusEvent": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "$ref": "#/definitions/models.FlightStatusEventType"
+                },
+                "flightId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FlightStatusEventType": {
+            "type": "string",
+            "enum": [
+                "event:state",
+                "event:location",
+                "event:violation"
+            ],
+            "x-enum-varnames": [
+                "StateEvent",
+                "LocationEvent",
+                "ViolationEvent"
+            ]
+        },
+        "models.FlightStatusLocation": {
+            "type": "object",
+            "properties": {
+                "agl": {
+                    "type": "number"
+                },
+                "altitude": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "flapRatio": {
+                    "type": "number"
+                },
+                "flightId": {
+                    "type": "integer"
+                },
+                "fuel": {
+                    "type": "number"
+                },
+                "gearForce": {
+                    "type": "number"
+                },
+                "gforce": {
+                    "type": "number"
+                },
+                "gs": {
+                    "type": "number"
+                },
+                "heading": {
+                    "type": "number"
+                },
+                "ias": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "pitch": {
+                    "type": "number"
+                },
+                "state": {
+                    "$ref": "#/definitions/models.FlightState"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "vs": {
+                    "type": "number"
+                }
             }
         },
         "models.SendCommandReq": {

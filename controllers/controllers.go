@@ -9,4 +9,5 @@ var Module = fx.Options(
 	fx.Provide(NewMiscController),
 	fx.Provide(NewDatarefController),
 	fx.Provide(NewWebSocketController),
+	fx.Provide(NewFlightLogsController),
 )

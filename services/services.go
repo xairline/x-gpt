@@ -6,4 +6,5 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewDatarefService),
 	fx.Provide(NewWebSocketService),
+	fx.Provide(NewFlightLogsService),
 )

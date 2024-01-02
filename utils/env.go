@@ -11,6 +11,11 @@ type Env struct {
 	ServerPort    string `mapstructure:"SERVER_PORT"`
 	OauthClientID string `mapstructure:"OAUTH_CLIENT_ID"`
 	OauthEndpoint string `mapstructure:"OAUTH_ENDPOINT"`
+	DbHost        string `mapstructure:"DB_HOST"`
+	DbUser        string `mapstructure:"DB_USER"`
+	DbPass        string `mapstructure:"DB_PASS"`
+	DbName        string `mapstructure:"DB_NAME"`
+	DbPort        int    `mapstructure:"DB_PORT"`
 }
 
 // NewEnv creates a new environment
