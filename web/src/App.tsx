@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import {useLogto} from '@logto/react';
 import Callback from "./pages/Callback";
+import FlightLog from "./pages/flight-log";
 
 const {Title} = Typography;
 const {Content,} = Layout;
@@ -86,6 +87,11 @@ const App: React.FC = () => {
                             <Route path={"/"} element={<Dashboard/>}/>
                             <Route path={"/dashboard"} element={<Dashboard/>}/>
                             <Route path="/callback" element={<Callback/>}/>
+                            <Route
+                                key={'flight-logs'}
+                                path="/flight-logs/:id"
+                                element={<FlightLog/>}
+                            />
                         </Routes>
                     </Content>
                 </Layout>

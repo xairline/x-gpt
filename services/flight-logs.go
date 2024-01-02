@@ -11,6 +11,7 @@ import (
 	"github.com/xairline/x-gpt/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -22,11 +23,30 @@ type FlightLogsService interface {
 	GetLastSyncedLocalIdByUsername(username string) (int, error)
 	SaveFlightStatuses(statuses []models.FlightStatus)
 	GetFlightLogs(c *gin.Context)
+	GetFlightLog(c *gin.Context)
 }
 
 type flightLogsService struct {
 	Logger utils.Logger
 	db     *gorm.DB
+}
+
+func (f flightLogsService) GetFlightLog(c *gin.Context) {
+	var res models.FlightStatus
+	id, _ := strconv.Atoi(c.Param("id"))
+	result := f.db.
+		Model(&models.FlightStatus{}).
+		Preload("Locations").
+		Preload("Events").
+		First(&res, id)
+	if result.Error == nil {
+		c.JSON(200, res)
+		return
+	} else {
+		f.Logger.Infof("%+v", result.Error)
+		c.JSON(404, "not found")
+		return
+	}
 }
 
 func (f flightLogsService) GetFlightLogs(c *gin.Context) {

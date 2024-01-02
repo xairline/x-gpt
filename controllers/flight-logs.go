@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/xairline/x-gpt/models"
 	"github.com/xairline/x-gpt/services"
 	"github.com/xairline/x-gpt/utils"
 )
@@ -53,21 +52,6 @@ func (u FlightLogsController) GetFlightLogs(c *gin.Context) {
 // @Failure  404  "Not Found"
 // @Router   /flight-logs/{id} [get]
 func (u FlightLogsController) GetFlightLog(c *gin.Context) {
-	var res models.FlightStatus
-	//id, _ := strconv.Atoi(c.Param("id"))
-	//result := u.db.
-	//	Model(&models.FlightStatus{}).
-	//	Preload("Locations").
-	//	Preload("Events").
-	//	First(&res, id)
-	//if result.Error == nil {
-	//	c.JSON(200, res)
-	//	return
-	//} else {
-	//	u.logger.Infof("%+v", result.Error)
-	//	c.JSON(404, "not found")
-	//	return
-	//}
-	c.JSON(200, res)
+	u.flightLogsService.GetFlightLog(c)
 	return
 }

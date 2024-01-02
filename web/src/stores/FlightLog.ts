@@ -118,175 +118,187 @@ class FlightLogStore {
         };
     }
 
-    // @computed
-    // get LandingData(): any {
-    //     const line: any[] = [];
-    //     const column: any[] = [];
-    //     const gearForce: any[] = [];
-    //     const touchdownIndex: number[] = [];
-    //     let sampling: boolean = false;
-    //     let lastTs: number = 0;
-    //     this.flightStatus.locations?.forEach((location: any, index: number) => {
-    //         if (location.state == ModelsFlightState.FlightStateLanding) {
-    //             sampling = true;
-    //
-    //             if (
-    //                 location.gearForce <= 1 &&
-    //                 this.flightStatus?.locations[index + 1]?.gearForce > 1
-    //             ) {
-    //                 touchdownIndex.push(index);
-    //             }
-    //         }
-    //         if (location.state == ModelsFlightState.FlightStateTaxiIn) {
-    //             sampling = false;
-    //         }
-    //
-    //         if (sampling && location.timestamp - lastTs > 0) {
-    //             lastTs = location.timestamp;
-    //             line.push(
-    //                 {
-    //                     name: 'IAS',
-    //                     ts:
-    //                         Math.floor(
-    //                             (location.timestamp -
-    //                                 this.flightStatus.locations[0].timestamp) *
-    //                             100
-    //                         ) / 100,
-    //                     value: location.ias,
-    //                 },
-    //                 {
-    //                     name: 'VS',
-    //                     ts:
-    //                         Math.floor(
-    //                             (location.timestamp -
-    //                                 this.flightStatus.locations[0].timestamp) *
-    //                             100
-    //                         ) / 100,
-    //                     value: location.vs,
-    //                 },
-    //                 {
-    //                     name: 'AGL',
-    //                     ts:
-    //                         Math.floor(
-    //                             (location.timestamp -
-    //                                 this.flightStatus.locations[0].timestamp) *
-    //                             100
-    //                         ) / 100,
-    //                     value: location.agl * 3.28084,
-    //                 }
-    //             );
-    //             column.push({
-    //                 type: 'G-Force',
-    //                 ts:
-    //                     Math.floor(
-    //                         (location.timestamp - this.flightStatus.locations[0].timestamp) *
-    //                         100
-    //                     ) / 100,
-    //                 count: location.gforce,
-    //             });
-    //             gearForce.push({
-    //                 ts:
-    //                     Math.floor(
-    //                         (location.timestamp - this.flightStatus.locations[0].timestamp) *
-    //                         100
-    //                     ) / 100,
-    //                 value: location.gearForce,
-    //             });
-    //         }
-    //     });
-    //
-    //     return {line, column, gearForce, touchdownIndex};
-    // }
+    @computed
+    get LandingData(): any {
+        const line: any[] = [];
+        const column: any[] = [];
+        const gearForce: any[] = [];
+        const touchdownIndex: number[] = [];
+        let sampling: boolean = false;
+        let lastTs: number = 0;
+        this.flightStatus.locations?.forEach((location: any, index: number) => {
+            if (location.state == ModelsFlightState.FlightStateLanding) {
+                sampling = true;
 
-    // @computed
-    // get TakeoffData(): any {
-    //     const line: any[] = [];
-    //     const column: any[] = [];
-    //     let sampling: boolean = false;
-    //     let lastTs: number = 0;
-    //     this.flightStatus.locations?.forEach((location: any, index: number) => {
-    //         if (location.state == ModelsFlightState.FlightStateTakeoff) {
-    //             sampling = true;
-    //         }
-    //         if (location.state == ModelsFlightState.FlightStateClimb) {
-    //             sampling = false;
-    //         }
-    //
-    //         if (sampling && location.timestamp - lastTs > 0.5) {
-    //             lastTs = location.timestamp;
-    //             line.push(
-    //                 {
-    //                     name: 'IAS',
-    //                     ts:
-    //                         Math.floor(
-    //                             (location.timestamp -
-    //                                 this.flightStatus.locations[0].timestamp) *
-    //                             10
-    //                         ) / 10,
-    //                     value: location.ias,
-    //                 },
-    //                 {
-    //                     name: 'VS',
-    //                     ts:
-    //                         Math.floor(
-    //                             (location.timestamp -
-    //                                 this.flightStatus.locations[0].timestamp) *
-    //                             10
-    //                         ) / 10,
-    //                     value: location.vs,
-    //                 }
-    //             );
-    //             column.push({
-    //                 type: 'AGL',
-    //                 ts:
-    //                     Math.floor(
-    //                         (location.timestamp - this.flightStatus.locations[0].timestamp) *
-    //                         10
-    //                     ) / 10,
-    //                 count: location.agl * 3.28084,
-    //             });
-    //         }
-    //     });
-    //
-    //     return {line, column};
-    // }
+                if (
+                    location.gearForce <= 1 &&
+                    // @ts-ignore
+                    this.flightStatus?.locations[index + 1]?.gearForce > 1
+                ) {
+                    touchdownIndex.push(index);
+                }
+            }
+            if (location.state == ModelsFlightState.FlightStateTaxiIn) {
+                sampling = false;
+            }
 
-    // @computed
-    // get OverviewData(): any {
-    //     const line: any[] = [];
-    //     const column: any[] = [];
-    //     let sampling: boolean = false;
-    //     let lastTs: number = 0;
-    //     this.flightStatus.locations?.forEach((location: any, index: number) => {
-    //         if (location.state == ModelsFlightState.FlightStateTakeoff) {
-    //             sampling = true;
-    //         }
-    //         if (location.state == ModelsFlightState.FlightStateTaxiIn) {
-    //             sampling = false;
-    //         }
-    //
-    //         if (sampling && location.timestamp - lastTs > 10) {
-    //             lastTs = location.timestamp;
-    //             line.push({
-    //                 name: 'IAS',
-    //                 ts: Math.floor(
-    //                     location.timestamp -
-    //                     (this.flightStatus.locations[0].timestamp as any)
-    //                 ),
-    //                 value: location.ias,
-    //             });
-    //             column.push({
-    //                 type: 'AGL',
-    //                 ts: Math.floor(
-    //                     location.timestamp - this.flightStatus.locations[0].timestamp
-    //                 ),
-    //                 count: location.agl * 3.28084,
-    //             });
-    //         }
-    //     });
-    //
-    //     return {line, column};
-    // }
+            if (sampling && location.timestamp - lastTs > 0) {
+                lastTs = location.timestamp;
+                line.push(
+                    {
+                        name: 'IAS',
+                        ts:
+                            Math.floor(
+                                (location.timestamp -
+                                    // @ts-ignore
+                                    this.flightStatus.locations[0].timestamp) *
+                                100
+                            ) / 100,
+                        value: location.ias,
+                    },
+                    {
+                        name: 'VS',
+                        ts:
+                            Math.floor(
+                                (location.timestamp -
+                                    // @ts-ignore
+                                    this.flightStatus.locations[0].timestamp) *
+                                100
+                            ) / 100,
+                        value: location.vs,
+                    },
+                    {
+                        name: 'AGL',
+                        ts:
+                            Math.floor(
+                                (location.timestamp -
+                                    // @ts-ignore
+                                    this.flightStatus.locations[0].timestamp) *
+                                100
+                            ) / 100,
+                        value: location.agl * 3.28084,
+                    }
+                );
+                column.push({
+                    type: 'G-Force',
+                    ts:
+                        Math.floor(
+                            // @ts-ignore
+                            (location.timestamp - this.flightStatus.locations[0].timestamp) *
+                            100
+                        ) / 100,
+                    count: location.gforce,
+                });
+                gearForce.push({
+                    ts:
+                        Math.floor(
+                            // @ts-ignore
+                            (location.timestamp - this.flightStatus.locations[0].timestamp) *
+                            100
+                        ) / 100,
+                    value: location.gearForce,
+                });
+            }
+        });
+
+        return {line, column, gearForce, touchdownIndex};
+    }
+
+    @computed
+    get TakeoffData(): any {
+        const line: any[] = [];
+        const column: any[] = [];
+        let sampling: boolean = false;
+        let lastTs: number = 0;
+        this.flightStatus.locations?.forEach((location: any, index: number) => {
+            if (location.state == ModelsFlightState.FlightStateTakeoff) {
+                sampling = true;
+            }
+            if (location.state == ModelsFlightState.FlightStateClimb) {
+                sampling = false;
+            }
+
+            if (sampling && location.timestamp - lastTs > 0.5) {
+                lastTs = location.timestamp;
+                line.push(
+                    {
+                        name: 'IAS',
+                        ts:
+                            Math.floor(
+                                (location.timestamp -
+                                    // @ts-ignore
+                                    this.flightStatus.locations[0].timestamp) *
+                                10
+                            ) / 10,
+                        value: location.ias,
+                    },
+                    {
+                        name: 'VS',
+                        ts:
+                            Math.floor(
+                                (location.timestamp -
+                                    // @ts-ignore
+                                    this.flightStatus.locations[0].timestamp) *
+                                10
+                            ) / 10,
+                        value: location.vs,
+                    }
+                );
+                column.push({
+                    type: 'AGL',
+                    ts:
+                        Math.floor(
+                            // @ts-ignore
+                            (location.timestamp - this.flightStatus.locations[0].timestamp) *
+                            10
+                        ) / 10,
+                    count: location.agl * 3.28084,
+                });
+            }
+        });
+
+        return {line, column};
+    }
+
+    @computed
+    get OverviewData(): any {
+        const line: any[] = [];
+        const column: any[] = [];
+        let sampling: boolean = false;
+        let lastTs: number = 0;
+        this.flightStatus.locations?.forEach((location: any, index: number) => {
+            if (location.state == ModelsFlightState.FlightStateTakeoff) {
+                sampling = true;
+            }
+            if (location.state == ModelsFlightState.FlightStateTaxiIn) {
+                sampling = false;
+            }
+
+            if (sampling && location.timestamp - lastTs > 10) {
+                lastTs = location.timestamp;
+
+                line.push({
+                    name: 'IAS',
+                    ts: Math.floor(
+                        location.timestamp -
+                        // @ts-ignore
+                        (this.flightStatus.locations[0].timestamp as any)
+                    ),
+                    value: location.ias,
+                });
+                column.push({
+                    type: 'AGL',
+                    ts: Math.floor(
+                        // @ts-ignore
+                        location.timestamp - this.flightStatus.locations[0].timestamp
+                    ),
+                    count: location.agl * 3.28084,
+                });
+            }
+        });
+
+        return {line, column};
+    }
 
     @computed
     get LandingLineData(): any {
@@ -363,12 +375,13 @@ class FlightLogStore {
         return {line, column};
     }
 
-    // @computed
-    // get FlightEvents(): any {
-    //     return this.flightStatus.events?.slice().sort((eventA, eventB) => {
-    //         return eventA.timestamp - eventB.timestamp;
-    //     });
-    // }
+    @computed
+    get FlightEvents(): any {
+        return this.flightStatus.events?.slice().sort((eventA, eventB) => {
+            // @ts-ignore
+            return eventA.timestamp - eventB.timestamp;
+        });
+    }
 
     @computed
     get FlightDetailData(): ModelsFlightStatusLocation[] {
