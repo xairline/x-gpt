@@ -4,6 +4,7 @@ package services
 
 import "C"
 import (
+	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -11,7 +12,9 @@ import (
 	"github.com/xairline/x-gpt/utils"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
+	"time"
 )
 
 var webSocketSvcLock = &sync.Mutex{}
@@ -24,8 +27,9 @@ type WebSocketService interface {
 }
 
 type webSocketService struct {
-	Logger utils.Logger
-	Hub    *models.Hub
+	Logger            utils.Logger
+	Hub               *models.Hub
+	FlightLogsService FlightLogsService
 }
 
 var upgrader = websocket.Upgrader{
@@ -54,6 +58,32 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 	client.Hub.Register <- client
 
 	go client.WritePump()
+
+	go func() {
+		for {
+			syncedLocalId, _ := ws.FlightLogsService.GetLastSyncedLocalIdByUsername(clientId)
+			response, err := ws.SendWsMsgByClientId(clientId, "SyncFlightLogs|"+strconv.Itoa(syncedLocalId))
+			if err != nil {
+				ws.Logger.Errorf("Failed to sync flight logs: %+v", err)
+				break
+			}
+			if response == "SyncFlightLogs|Done" {
+				ws.Logger.Infof("Synced flight logs for client: %s", clientId)
+				time.Sleep(15 * time.Second)
+				continue
+			}
+			var flightStatuses, syncedFlightStatuses []models.FlightStatus
+			json.Unmarshal([]byte(response), &flightStatuses)
+			for _, flightStatus := range flightStatuses {
+				flightStatus.Username = clientId
+				flightStatus.LocalId = flightStatus.ID
+				flightStatus.ID = 0
+				syncedFlightStatuses = append(syncedFlightStatuses, flightStatus)
+			}
+			ws.FlightLogsService.SaveFlightStatuses(syncedFlightStatuses)
+			ws.Logger.Infof("Synced flight logs for client: %s", clientId)
+		}
+	}()
 	//go client.ReadPump()
 }
 
@@ -66,7 +96,7 @@ func (ws webSocketService) IsClientExist(clientId string) bool {
 	return false
 }
 
-func NewWebSocketService(logger utils.Logger) WebSocketService {
+func NewWebSocketService(logger utils.Logger, flightLogsService FlightLogsService) WebSocketService {
 	if webSocketSvc != nil {
 		logger.Info("WebSocket SVC has been initialized already")
 		return webSocketSvc
@@ -77,22 +107,20 @@ func NewWebSocketService(logger utils.Logger) WebSocketService {
 		hub := models.NewHub()
 		go hub.Run()
 		webSocketSvc = webSocketService{
-			Logger: logger,
-			Hub:    hub,
+			Logger:            logger,
+			Hub:               hub,
+			FlightLogsService: flightLogsSvc,
 		}
 		return webSocketSvc
 	}
 }
 
 func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) (string, error) {
-	// Lock the Hub for safe concurrent access
-	ws.Hub.Lock()
-	defer ws.Hub.Unlock()
-
 	// Iterate over all clients in the Hub
 	for client := range ws.Hub.Clients {
 		if client.Id == clientId {
 			// Found the client, send the message
+			client.Lock()
 			select {
 			case client.Send <- []byte(message):
 				for {
@@ -105,11 +133,14 @@ func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) 
 					}
 					if len(message) > 0 {
 						ws.Logger.Infof("Client: %s, received: %s", clientId, message)
+						client.Unlock()
 						return string(message), nil
 					}
 				}
+				client.Unlock()
 				break
 			default:
+				client.Unlock()
 				return "", errors.New("failed to send message: channel is full")
 			}
 		}

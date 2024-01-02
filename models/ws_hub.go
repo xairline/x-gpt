@@ -12,6 +12,7 @@ type Client struct {
 	Conn   *websocket.Conn
 	Send   chan []byte
 	Logger utils.Logger
+	mu     sync.Mutex
 }
 
 type Hub struct {
@@ -19,7 +20,6 @@ type Hub struct {
 	Register   chan *Client
 	Unregister chan *Client
 	Broadcast  chan []byte
-	mu         sync.Mutex
 }
 
 func NewHub() *Hub {
@@ -79,11 +79,11 @@ func (c *Client) WritePump() {
 }
 
 // Lock locks the Hub. It should be used when accessing or modifying the Hub's data.
-func (h *Hub) Lock() {
-	h.mu.Lock()
+func (c *Client) Lock() {
+	c.mu.Lock()
 }
 
 // Unlock unlocks the Hub. It should be called after Lock when the Hub's data manipulation is done.
-func (h *Hub) Unlock() {
-	h.mu.Unlock()
+func (c *Client) Unlock() {
+	c.mu.Unlock()
 }

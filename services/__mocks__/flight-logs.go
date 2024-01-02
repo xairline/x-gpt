@@ -5,6 +5,8 @@
 package mocks
 
 import (
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +31,19 @@ func NewMockFlightLogsService(ctrl *gomock.Controller) *MockFlightLogsService {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockFlightLogsService) EXPECT() *MockFlightLogsServiceMockRecorder {
 	return m.recorder
+}
+
+// GetLastSyncedLocalIdByUsername mocks base method.
+func (m *MockFlightLogsService) GetLastSyncedLocalIdByUsername(username string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLastSyncedLocalIdByUsername", username)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLastSyncedLocalIdByUsername indicates an expected call of GetLastSyncedLocalIdByUsername.
+func (mr *MockFlightLogsServiceMockRecorder) GetLastSyncedLocalIdByUsername(username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastSyncedLocalIdByUsername", reflect.TypeOf((*MockFlightLogsService)(nil).GetLastSyncedLocalIdByUsername), username)
 }

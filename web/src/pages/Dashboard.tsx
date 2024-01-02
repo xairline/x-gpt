@@ -4,6 +4,7 @@ import {useLogto, UserInfoResponse} from '@logto/react';
 import MapArch from "../components/mapArch";
 import {CoffeeOutlined, IdcardOutlined, SettingOutlined} from "@ant-design/icons";
 import Analytics from "../components/Analytics";
+import {useStores} from "../stores";
 
 const {Title} = Typography;
 
@@ -13,6 +14,7 @@ interface Props {
 
 
 const Dashboard: React.FC<Props> = () => {
+    const {FlightLogStore} = useStores();
     const {isAuthenticated, signIn, signOut, fetchUserInfo, getAccessToken} = useLogto();
     const [userMetadata, setUserMetadata] = useState<UserInfoResponse>();
     useEffect(() => {
@@ -20,6 +22,7 @@ const Dashboard: React.FC<Props> = () => {
             if (isAuthenticated) {
                 const userInfo = await fetchUserInfo();
                 setUserMetadata(userInfo);
+                await FlightLogStore.loadFlightStatuses(userInfo?.sub);
             }
         })();
 
@@ -27,8 +30,8 @@ const Dashboard: React.FC<Props> = () => {
     return (
         <div style={{padding: "8", height: "100%"}}>
             <Row style={{height: "100%"}}>
-                <Col span={window.innerHeight > window.innerWidth ? 24 : 8}
-                     style={{height: window.innerHeight > window.innerWidth ? "40%" : "100%"}}>
+                <Col span={window.innerHeight > window.innerWidth ? 24 : 10}
+                     style={{height: window.innerHeight > window.innerWidth ? "45%" : "100%"}}>
                     <Tabs
                         defaultActiveKey="1"
                         type="card"
@@ -45,8 +48,8 @@ const Dashboard: React.FC<Props> = () => {
                         }
                     />
                 </Col>
-                <Col span={window.innerHeight > window.innerWidth ? 24 : 16}
-                     style={{height: window.innerHeight > window.innerWidth ? "60%" : "100%"}}>
+                <Col span={window.innerHeight > window.innerWidth ? 24 : 14}
+                     style={{height: window.innerHeight > window.innerWidth ? "55%" : "100%"}}>
                     <MapArch/>
                 </Col>
 

@@ -26,6 +26,12 @@
                     },
                     {
                         "type": "string",
+                        "description": "specify clientId",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "departure airport",
                         "name": "departureAirportId",
                         "in": "query"
@@ -463,6 +469,9 @@
                     }
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "localId": {
                     "type": "integer"
                 },
                 "locations": {

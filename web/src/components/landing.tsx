@@ -38,14 +38,11 @@ export function Landing(props: LandingProps) {
             ],
         };
         return (
-            <Card title={'Landing'} size={props.size}>
+            <Card title={'Landing'} size={props.size} headStyle={{background: "#006363", color: "white"}}>
                 <Row gutter={[8, 8]}>
-                    <Col span={16}>
-                        <DualAxes {...(config as any)} />
-                    </Col>
-                    <Col span={7} offset={1}>
+                    <Col span={24}>
                         <Row gutter={[8, 8]}>
-                            <Col span={24}>
+                            <Col span={12}>
                                 <Statistic
                                     title="Avg VS (ft/min)"
                                     value={FlightLogStore.AvgLandingVS}
@@ -55,7 +52,7 @@ export function Landing(props: LandingProps) {
                                     // formatter={formatter}
                                 />
                             </Col>
-                            <Col span={24}>
+                            <Col span={12}>
                                 <Statistic
                                     title="Avg G"
                                     value={FlightLogStore.AvgGForce}
@@ -68,6 +65,10 @@ export function Landing(props: LandingProps) {
                             </Col>
                         </Row>
                     </Col>
+                    <Col span={24}>
+                        <DualAxes {...(config as any)} />
+                    </Col>
+
                 </Row>
             </Card>
         );

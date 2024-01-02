@@ -19,6 +19,7 @@ type FlightStatus struct {
 	AircraftICAO        string                 `json:"aircraftICAO"`
 	AircraftDisplayName string                 `json:"aircraftDisplayName"`
 	Username            string                 `json:"username"`
+	LocalId             uint                   `json:"localId"`
 }
 
 type FlightStatusLocation struct {

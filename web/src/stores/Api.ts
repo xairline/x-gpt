@@ -49,6 +49,7 @@ export interface ModelsFlightStatus {
   departureFlightInfo?: ModelsFlightInfo;
   events?: ModelsFlightStatusEvent[];
   id?: number;
+  localId?: number;
   locations?: ModelsFlightStatusLocation[];
   updatedAt?: string;
   username?: string;
@@ -331,6 +332,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: {
         /** specify if it's overview */
         isOverview?: string;
+        /** specify clientId */
+        clientId?: string;
         /** departure airport */
         departureAirportId?: string;
         /** arrival airport */

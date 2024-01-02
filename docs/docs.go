@@ -36,6 +36,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "specify clientId",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "departure airport",
                         "name": "departureAirportId",
                         "in": "query"
@@ -473,6 +479,9 @@ const docTemplate = `{
                     }
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "localId": {
                     "type": "integer"
                 },
                 "locations": {

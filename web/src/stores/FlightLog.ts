@@ -307,7 +307,7 @@ class FlightLogStore {
             },
         ];
         let counter = 0;
-        if (this.flightStatuses.length > 0) {
+        if (this.flightStatuses?.length > 0) {
             this.flightStatuses
                 .slice()
                 .sort((a, b) => {
@@ -434,22 +434,26 @@ class FlightLogStore {
     //     return unique.length;
     // }
 
-    // @computed
-    // get TotalNumberOfAirports(): number {
-    //     const airports = [
-    //         ...this.flightStatuses.map((item) => item.departureFlightInfo?.airportId),
-    //         ...this.flightStatuses
-    //             .filter((item) => item.arrivalFlightInfo?.airportId != '')
-    //             .map((item) => item.arrivalFlightInfo?.airportId),
-    //     ];
-    //     const unique = [...new Set(airports.map((item) => item))];
-    //     return unique.length;
-    // }
+    @computed
+    get TotalNumberOfAirports(): number {
+        const airports = [
+            ...this.flightStatuses.map((item) => item.departureFlightInfo?.airportId),
+            ...this.flightStatuses
+                .filter((item) => item.arrivalFlightInfo?.airportId != '')
+                .map((item) => item.arrivalFlightInfo?.airportId),
+        ];
+
+        // Filter out undefined values before creating the Set
+        const filteredAirports = airports.filter((item): item is string => item !== undefined);
+
+        const unique = new Set(filteredAirports);
+        return unique.size;
+    }
 
     @computed
     get tableDataSet(): TableDataSet {
         let data: any[] = [];
-        this.flightStatuses.forEach((flightStatus) => {
+        this.flightStatuses?.forEach((flightStatus) => {
             data.push({
                 key: flightStatus.id,
                 date: flightStatus.updatedAt,
@@ -476,8 +480,8 @@ class FlightLogStore {
     }
 
     @action
-    async loadFlightStatuses() {
-        let res = await this.api.flightLogs.flightLogsList({isOverview: 'true'});
+    async loadFlightStatuses(clientId?: string) {
+        let res = await this.api.flightLogs.flightLogsList({isOverview: 'true', clientId: clientId || ""});
         runInAction(() => {
             this.flightStatuses = res.data;
         });

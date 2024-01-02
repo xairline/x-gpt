@@ -18,6 +18,7 @@ const App: React.FC = () => {
     const screens = useBreakpoint();
     const {isAuthenticated, fetchUserInfo} = useLogto();
     useEffect(() => {
+
     }, [isAuthenticated, fetchUserInfo]);
     const [current, setCurrent] = useState(
         location === "/" || location === ""
