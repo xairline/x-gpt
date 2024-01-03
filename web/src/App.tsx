@@ -4,7 +4,7 @@ import 'antd/dist/reset.css';
 import './App.css';
 import {Col, ConfigProvider, Image, Layout, Row, Typography} from 'antd';
 import UserInfo from "./components/UserInfo";
-import {Route, Routes} from "react-router-dom";
+import {Link, Route, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import {useLogto} from '@logto/react';
@@ -42,35 +42,74 @@ const App: React.FC = () => {
                             display: "flex",
                             height: "100%",
                         }}>
-                            <Image src={"/logo512.png"}
-                                   style={{maxHeight: "8vh", objectFit: "contain", margin: "12px 24px 12px"}}>
-                            </Image>
+                            <Link to={"/"}>
+                                <Image src={"/logo512.png"}
+                                       style={
+                                           {
+                                               maxHeight: "8vh",
+                                               objectFit: "contain",
+                                               margin: "12px 24px 12px"
+                                           }
+                                       }
+                                       preview={false}
+                                >
+
+                                </Image>
+                            </Link>
 
                         </Row>
                     </Col>
                     {
                         !screens.sm ? <></> :
                             <Col flex={"auto"}>
-                                <Title level={1} style={{
-                                    color: "white", display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: "100%",
-                                }}>
-                                    X Airline
-                                </Title>
+                                <Link to={"/"}>
+                                    <Title level={1} style={{
+                                        color: "white", display: "flex",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center",
+                                        height: "100%",
+                                    }}>
+                                        X Airline
+                                    </Title>
+                                </Link>
                             </Col>
                     }
                     <Col flex={"auto"}>
-                        <div style={{
+                        <Row style={{
                             display: "flex",
                             justifyContent: !screens.sm ? "center" : "flex-end",
                             alignItems: "center",
                             height: "100%",
-                            marginRight: !screens.sm ? 0 : "24px",
+                            marginRight: !screens.sm ? "12px" : "24px",
                         }}>
-                            <UserInfo/>
-                        </div>
+                            <Col span={6}>
+                                <a href={"https://docs.xairline.org"}>
+                                    <Title
+                                        level={screens.xxl ? 2 : 5}
+                                        italic={true}
+                                        style={{
+                                            marginTop: "24px",
+                                            color: "white"
+                                        }}>
+                                        Docs
+                                    </Title>
+                                </a>
+                            </Col>
+                            <Col span={10}>
+                                <a href={"https://github.com/xairline/xairline-v2/releases/latest"}>
+                                    <Title
+                                        level={screens.xxl ? 2 : 5}
+                                        italic={true}
+                                        style={{
+                                            marginTop: "24px",
+                                            color: "white"
+                                        }}>
+                                        Download
+                                    </Title>
+                                </a>
+                            </Col>
+                            <Col span={8}><UserInfo/></Col>
+                        </Row>
                     </Col>
                 </Row>
 
