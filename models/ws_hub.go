@@ -61,7 +61,7 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) Cleanup() {
-	ticker := time.NewTicker(15 * time.Second)
+	ticker := time.NewTicker(15 * time.Minute)
 	defer ticker.Stop()
 	for {
 		select {
@@ -70,7 +70,7 @@ func (h *Hub) Cleanup() {
 			logger := utils.NewLogger()
 			logger.Infof("Active clients before: %d", len(h.Clients))
 			for client := range h.Clients {
-				if time.Since(client.LastActivity) > 20*time.Second {
+				if time.Since(client.LastActivity) > 20*time.Minute {
 					client.Logger.Infof("Client: %s inactive for 20 minutes, closing connection", client.Id)
 					h.Unregister <- client
 				} else {
