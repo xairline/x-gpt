@@ -1,9 +1,9 @@
 import {ColumnsType, TableProps} from 'antd/es/table';
 import {Card, Table, Tooltip} from 'antd';
-import {ModelsFlightInfo} from '../../../../xa-ng/apps/xws/src/store/Api';
 import {Link} from 'react-router-dom';
 import {useObserver} from 'mobx-react-lite';
 import {useStores} from "../stores";
+import {ModelsFlightInfo} from "../stores/Api";
 
 /* eslint-disable-next-line */
 export interface TableViewProps {
