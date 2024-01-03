@@ -54,28 +54,29 @@ const Dashboard: React.FC<Props> = () => {
                 </Col>
 
             </Row>
-
-            <FloatButton.Group
-                shape="circle"
-                type="default"
-                trigger={"hover"}
-                style={{right: 64}}
-                icon={<SettingOutlined/>}
-                tooltip={<div>Settings</div>}
-            >
-                <FloatButton
+            {isAuthenticated &&
+                <FloatButton.Group
                     shape="circle"
                     type="default"
-                    icon={<IdcardOutlined/>}
-                    tooltip={<div>Account</div>}
-                />
-                <FloatButton
-                    shape="circle"
-                    type="default"
-                    icon={<CoffeeOutlined/>}
-                    tooltip={<div>ChatGPT</div>}
-                />
-            </FloatButton.Group>
+                    trigger={"hover"}
+                    style={{right: 64}}
+                    icon={<SettingOutlined/>}
+                    tooltip={<div>Settings</div>}
+                >
+                    <FloatButton
+                        shape="circle"
+                        type="default"
+                        icon={<IdcardOutlined/>}
+                        tooltip={<div>Account</div>}
+                    />
+                    <FloatButton
+                        shape="circle"
+                        type="default"
+                        icon={<CoffeeOutlined/>}
+                        tooltip={<div>ChatGPT</div>}
+                    />
+                </FloatButton.Group>
+            }
 
         </div>
     );
