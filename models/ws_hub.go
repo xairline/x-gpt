@@ -8,13 +8,14 @@ import (
 )
 
 type Client struct {
-	Id     string
-	Hub    *Hub
-	Conn   *websocket.Conn
-	Send   chan []byte
-	Logger utils.Logger
-	mu     sync.Mutex
-	locked bool
+	Id           string
+	Hub          *Hub
+	Conn         *websocket.Conn
+	Send         chan []byte
+	Logger       utils.Logger
+	mu           sync.Mutex
+	locked       bool
+	LastActivity time.Time
 }
 
 type Hub struct {
@@ -34,6 +35,7 @@ func NewHub() *Hub {
 }
 
 func (h *Hub) Run() {
+	go h.Cleanup()
 	for {
 		select {
 		case client := <-h.Register:
@@ -42,16 +44,40 @@ func (h *Hub) Run() {
 			if _, ok := h.Clients[client]; ok {
 				delete(h.Clients, client)
 				close(client.Send)
+				_ = client.Conn.Close()
 			}
 		case message := <-h.Broadcast:
 			for client := range h.Clients {
 				select {
 				case client.Send <- message:
 				default:
+
 					close(client.Send)
 					delete(h.Clients, client)
 				}
 			}
+		}
+	}
+}
+
+func (h *Hub) Cleanup() {
+	ticker := time.NewTicker(15 * time.Minute)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			counter := 0
+			logger := utils.NewLogger()
+			logger.Infof("Active clients before: %d", counter)
+			for client := range h.Clients {
+				if time.Since(client.LastActivity) > 20*time.Minute {
+					client.Logger.Infof("Client %s inactive for 20 minutes, closing connection", client.Id)
+					close(client.Send) // This will cause WritePump to close the connection
+				} else {
+					counter++
+				}
+			}
+			logger.Infof("Active clients after: %d", counter)
 		}
 	}
 }

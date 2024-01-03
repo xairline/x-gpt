@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var webSocketSvcLock = &sync.Mutex{}
@@ -48,11 +49,12 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 		return
 	}
 	client := &models.Client{
-		Id:     clientId,
-		Hub:    ws.Hub,
-		Conn:   conn,
-		Send:   make(chan []byte, 256),
-		Logger: ws.Logger,
+		Id:           clientId,
+		Hub:          ws.Hub,
+		Conn:         conn,
+		Send:         make(chan []byte, 256),
+		Logger:       ws.Logger,
+		LastActivity: time.Now(),
 	}
 	client.Hub.Register <- client
 	go client.WritePump()
@@ -132,6 +134,7 @@ func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) 
 					}
 					if len(message) > 0 {
 						ws.Logger.Infof("Client: %s, received: %s", clientId, message)
+						client.LastActivity = time.Now()
 						client.Unlock()
 						return string(message), nil
 					}
