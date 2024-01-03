@@ -1,11 +1,12 @@
-import {Card, Col, Collapse, Row, Spin, Statistic, Timeline} from 'antd';
+import {Button, Card, Col, Collapse, Row, Spin, Statistic, Timeline} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useObserver} from 'mobx-react-lite';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {DualAxes} from '@ant-design/plots';
 import {useStores} from "../stores";
 import MapDetailed from "../components/mapDetailed";
 import {ModelsFlightStatusEvent, ModelsFlightStatusEventType} from "../stores/Api";
+import {LeftOutlined} from "@ant-design/icons";
 
 const {Panel} = Collapse;
 
@@ -26,6 +27,7 @@ export function FlightLog(props: FlightLogProps) {
     const {FlightLogStore} = useStores();
     // Get the userId param from the URL.
     let {id} = useParams();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [windowDimensions, setWindowDimensions] = useState(
         getWindowDimensions()
@@ -159,259 +161,268 @@ export function FlightLog(props: FlightLogProps) {
                 <div className="content"/>
             </Spin>
         ) : (
-            <Row style={{height: '100%'}} gutter={8}>
-                <Col
-                    span={windowDimensions.width > windowDimensions.height ? 12 : 24}
-                    style={{
-                        height: `${windowDimensions.width > windowDimensions.height ? '100%' : '60%'}`,
-                    }}
-                >
-                    <Card
+            <>
+                <Button
+                    className="xairline-floating-button"
+                    type="default"
+                    icon={<LeftOutlined/>}
+                    onClick={() => navigate('/')}
+                />
+                <Row style={{height: '100%'}} gutter={8}>
+                    <Col
+                        span={windowDimensions.width > windowDimensions.height ? 12 : 24}
                         style={{
-                            height: `${windowDimensions.width > 992 ? '100%' : '99%'}`,
-                            overflowY: 'auto',
+                            height: `${windowDimensions.width > windowDimensions.height ? '100%' : '60%'}`,
                         }}
                     >
-                        <Row gutter={16} style={{height: '100%'}}>
-                            <Col
-                                span={8}
-                                md={6}
-                                style={{
-                                    height: '100%',
-                                    paddingTop: '10px',
-                                }}
-                            >
-                                <Timeline>
-                                    {FlightLogStore.FlightEvents.map(
-                                        (value: ModelsFlightStatusEvent) => {
-                                            // convert time to hh:mm
-                                            const h = Math.floor(
-                                                ((value.timestamp as any) -
-                                                    FlightLogStore.FlightEvents[0].timestamp) /
-                                                3600
-                                            );
-                                            const m = Math.floor(
-                                                ((value.timestamp as any) -
-                                                    FlightLogStore.FlightEvents[0].timestamp -
-                                                    h * 3600) /
-                                                60
-                                            );
-                                            return (
-                                                <Timeline.Item
-                                                    // @ts-ignore
-                                                    key={value.timestamp + value.description}
-                                                    color={
-                                                        value.eventType ==
-                                                        ModelsFlightStatusEventType.StateEvent
-                                                            ? 'blue'
-                                                            : 'red'
-                                                    }
-                                                >
-                                                    {h.toString().length == 1 ? '0' : ''}
-                                                    {h}:{m.toString().length == 1 ? '0' : ''}
-                                                    {m} - {value.details || value.description}
-                                                </Timeline.Item>
-                                            );
-                                        }
-                                    )}
-                                </Timeline>
-                            </Col>
-                            <Col span={16} md={18}>
-                                <Card
-                                    size={'small'}
+                        <Card
+                            style={{
+                                height: `${windowDimensions.width > 992 ? '100%' : '99%'}`,
+                                overflowY: 'auto',
+                            }}
+                        >
+                            <Row gutter={16} style={{height: '100%'}}>
+                                <Col
+                                    span={8}
+                                    md={6}
                                     style={{
                                         height: '100%',
+                                        paddingTop: '10px',
                                     }}
                                 >
-                                    <Row gutter={2}>
-                                        <Col span={6}>
-                                            <Statistic
-                                                title={'Aircraft'}
-                                                loading={FlightLogStore.FlightDetailData.length == 0}
-                                                value={FlightLogStore.flightStatus.aircraftICAO}
-                                                valueStyle={{fontSize: 'small'}}
-                                            />
-                                        </Col>
-                                        <Col span={6}>
-                                            <Statistic
-                                                title={'Airborne'}
-                                                suffix={'min'}
-                                                loading={FlightLogStore.FlightDetailData.length == 0}
-                                                value={
-                                                    ((FlightLogStore.FlightDetailData[2]
-                                                            .timestamp as any) -
-                                                        (FlightLogStore.FlightDetailData[1]
-                                                            .timestamp as any)) /
+                                    <Timeline>
+                                        {FlightLogStore.FlightEvents.map(
+                                            (value: ModelsFlightStatusEvent) => {
+                                                // convert time to hh:mm
+                                                const h = Math.floor(
+                                                    ((value.timestamp as any) -
+                                                        FlightLogStore.FlightEvents[0].timestamp) /
+                                                    3600
+                                                );
+                                                const m = Math.floor(
+                                                    ((value.timestamp as any) -
+                                                        FlightLogStore.FlightEvents[0].timestamp -
+                                                        h * 3600) /
                                                     60
-                                                }
-                                                precision={0}
-                                                valueStyle={{fontSize: 'small'}}
-                                            />
-                                        </Col>
-                                        <Col span={6}>
-                                            <Statistic
-                                                title={'Fuel (kg)'}
-                                                loading={FlightLogStore.FlightDetailData.length == 0}
-                                                value={
-                                                    ((FlightLogStore.FlightDetailData[0].fuel as any) -
-                                                        (FlightLogStore.FlightDetailData[3].fuel as any)) /
-                                                    60
-                                                }
-                                                precision={0}
-                                                valueStyle={{fontSize: 'small'}}
-                                            />
-                                        </Col>
-                                        <Col span={6}>
-                                            <Statistic
-                                                title={'Route'}
-                                                loading={FlightLogStore.FlightDetailData.length == 0}
-                                                value={`${FlightLogStore.flightStatus.departureFlightInfo?.airportId} - ${FlightLogStore.flightStatus.arrivalFlightInfo?.airportId}`}
-                                                valueStyle={{fontSize: 'small'}}
-                                            />
-                                        </Col>
-                                    </Row>
+                                                );
+                                                return (
+                                                    <Timeline.Item
+                                                        // @ts-ignore
+                                                        key={value.timestamp + value.description}
+                                                        color={
+                                                            value.eventType ==
+                                                            ModelsFlightStatusEventType.StateEvent
+                                                                ? 'blue'
+                                                                : 'red'
+                                                        }
+                                                    >
+                                                        {h.toString().length == 1 ? '0' : ''}
+                                                        {h}:{m.toString().length == 1 ? '0' : ''}
+                                                        {m} - {value.details || value.description}
+                                                    </Timeline.Item>
+                                                );
+                                            }
+                                        )}
+                                    </Timeline>
+                                </Col>
+                                <Col span={16} md={18}>
+                                    <Card
+                                        size={'small'}
+                                        style={{
+                                            height: '100%',
+                                        }}
+                                    >
+                                        <Row gutter={2}>
+                                            <Col span={6}>
+                                                <Statistic
+                                                    title={'Aircraft'}
+                                                    loading={FlightLogStore.FlightDetailData.length == 0}
+                                                    value={FlightLogStore.flightStatus.aircraftICAO}
+                                                    valueStyle={{fontSize: 'small'}}
+                                                />
+                                            </Col>
+                                            <Col span={6}>
+                                                <Statistic
+                                                    title={'Airborne'}
+                                                    suffix={'min'}
+                                                    loading={FlightLogStore.FlightDetailData.length == 0}
+                                                    value={
+                                                        ((FlightLogStore.FlightDetailData[2]
+                                                                .timestamp as any) -
+                                                            (FlightLogStore.FlightDetailData[1]
+                                                                .timestamp as any)) /
+                                                        60
+                                                    }
+                                                    precision={0}
+                                                    valueStyle={{fontSize: 'small'}}
+                                                />
+                                            </Col>
+                                            <Col span={6}>
+                                                <Statistic
+                                                    title={'Fuel (kg)'}
+                                                    loading={FlightLogStore.FlightDetailData.length == 0}
+                                                    value={
+                                                        ((FlightLogStore.FlightDetailData[0].fuel as any) -
+                                                            (FlightLogStore.FlightDetailData[3].fuel as any)) /
+                                                        60
+                                                    }
+                                                    precision={0}
+                                                    valueStyle={{fontSize: 'small'}}
+                                                />
+                                            </Col>
+                                            <Col span={6}>
+                                                <Statistic
+                                                    title={'Route'}
+                                                    loading={FlightLogStore.FlightDetailData.length == 0}
+                                                    value={`${FlightLogStore.flightStatus.departureFlightInfo?.airportId} - ${FlightLogStore.flightStatus.arrivalFlightInfo?.airportId}`}
+                                                    valueStyle={{fontSize: 'small'}}
+                                                />
+                                            </Col>
+                                        </Row>
 
-                                    <Row>
-                                        <Collapse
-                                            defaultActiveKey={['3']}
-                                            style={{
-                                                width: '100%',
-                                                marginTop: '16px',
-                                            }}
-                                        >
-                                            <Panel header="Overview" key="1">
-                                                <DualAxes {...(overviewConfig as any)} />
-                                            </Panel>
-                                            <Panel key={'2'} header={'Takeoff'}>
-                                                <DualAxes {...(takeoffConfig as any)} />
-                                            </Panel>
-                                            <Panel header="Landing" key="3">
-                                                <DualAxes {...(landingConfig as any)} />
+                                        <Row>
+                                            <Collapse
+                                                defaultActiveKey={['3']}
+                                                style={{
+                                                    width: '100%',
+                                                    marginTop: '16px',
+                                                }}
+                                            >
+                                                <Panel header="Overview" key="1">
+                                                    <DualAxes {...(overviewConfig as any)} />
+                                                </Panel>
+                                                <Panel key={'2'} header={'Takeoff'}>
+                                                    <DualAxes {...(takeoffConfig as any)} />
+                                                </Panel>
+                                                <Panel header="Landing" key="3">
+                                                    <DualAxes {...(landingConfig as any)} />
 
-                                                <Collapse style={{marginTop: '10px'}}>
-                                                    {touchDowns.map((v: any, index: number) => {
-                                                        return (
-                                                            <Panel
-                                                                header={`touchdown - ${index + 1}`}
-                                                                key={index}
-                                                            >
-                                                                <Row gutter={12}>
-                                                                    <Col span={6}>
-                                                                        <Statistic
-                                                                            title={'VS(ft/min)'}
-                                                                            // suffix={'ft/min'}
-                                                                            loading={
-                                                                                FlightLogStore.FlightDetailData
-                                                                                    .length == 0
-                                                                            }
-                                                                            value={Math.min(
-                                                                                // @ts-ignore
-                                                                                ...FlightLogStore?.flightStatus?.locations
-                                                                                    ?.slice(
+                                                    <Collapse style={{marginTop: '10px'}}>
+                                                        {touchDowns.map((v: any, index: number) => {
+                                                            return (
+                                                                <Panel
+                                                                    header={`touchdown - ${index + 1}`}
+                                                                    key={index}
+                                                                >
+                                                                    <Row gutter={12}>
+                                                                        <Col span={6}>
+                                                                            <Statistic
+                                                                                title={'VS(ft/min)'}
+                                                                                // suffix={'ft/min'}
+                                                                                loading={
+                                                                                    FlightLogStore.FlightDetailData
+                                                                                        .length == 0
+                                                                                }
+                                                                                value={Math.min(
+                                                                                    // @ts-ignore
+                                                                                    ...FlightLogStore?.flightStatus?.locations
+                                                                                        ?.slice(
+                                                                                            FlightLogStore.LandingData
+                                                                                                .touchdownIndex[index],
+                                                                                            FlightLogStore.LandingData
+                                                                                                .touchdownIndex[index] + 50
+                                                                                        )
+                                                                                        .map((v) => v.vs)
+                                                                                )}
+                                                                                precision={0}
+                                                                                valueStyle={{fontSize: 'small'}}
+                                                                            />
+                                                                        </Col>
+                                                                        <Col span={6}>
+                                                                            <Statistic
+                                                                                title={'IAS(kt)'}
+                                                                                // suffix={'kt'}
+                                                                                loading={
+                                                                                    FlightLogStore.FlightDetailData
+                                                                                        .length == 0
+                                                                                }
+                                                                                value={
+                                                                                    // @ts-ignore
+                                                                                    FlightLogStore?.flightStatus?.locations[
                                                                                         FlightLogStore.LandingData
-                                                                                            .touchdownIndex[index],
+                                                                                            .touchdownIndex[index]
+                                                                                        ].ias
+                                                                                }
+                                                                                precision={0}
+                                                                                valueStyle={{fontSize: 'small'}}
+                                                                            />
+                                                                        </Col>
+                                                                        <Col span={6}>
+                                                                            <Statistic
+                                                                                title={'G Force'}
+                                                                                value={Math.max(
+                                                                                    // @ts-ignore
+                                                                                    ...FlightLogStore?.flightStatus?.locations
+                                                                                        ?.slice(
+                                                                                            FlightLogStore.LandingData
+                                                                                                .touchdownIndex[index],
+                                                                                            FlightLogStore.LandingData
+                                                                                                .touchdownIndex[index] + 50
+                                                                                        )
+                                                                                        .map((v) => v.gforce)
+                                                                                )}
+                                                                                loading={
+                                                                                    FlightLogStore.FlightDetailData
+                                                                                        .length == 0
+                                                                                }
+                                                                                precision={2}
+                                                                                valueStyle={{fontSize: 'small'}}
+                                                                            />
+                                                                        </Col>
+                                                                        <Col span={6}>
+                                                                            <Statistic
+                                                                                title={'Pitch(deg)'}
+                                                                                // suffix={'deg'}
+                                                                                loading={
+                                                                                    FlightLogStore.FlightDetailData
+                                                                                        .length == 0
+                                                                                }
+                                                                                value={
+                                                                                    // @ts-ignore
+                                                                                    FlightLogStore?.flightStatus?.locations[
                                                                                         FlightLogStore.LandingData
-                                                                                            .touchdownIndex[index] + 50
-                                                                                    )
-                                                                                    .map((v) => v.vs)
-                                                                            )}
-                                                                            precision={0}
-                                                                            valueStyle={{fontSize: 'small'}}
-                                                                        />
-                                                                    </Col>
-                                                                    <Col span={6}>
-                                                                        <Statistic
-                                                                            title={'IAS(kt)'}
-                                                                            // suffix={'kt'}
-                                                                            loading={
-                                                                                FlightLogStore.FlightDetailData
-                                                                                    .length == 0
-                                                                            }
-                                                                            value={
-                                                                                // @ts-ignore
-                                                                                FlightLogStore?.flightStatus?.locations[
-                                                                                    FlightLogStore.LandingData
-                                                                                        .touchdownIndex[index]
-                                                                                    ].ias
-                                                                            }
-                                                                            precision={0}
-                                                                            valueStyle={{fontSize: 'small'}}
-                                                                        />
-                                                                    </Col>
-                                                                    <Col span={6}>
-                                                                        <Statistic
-                                                                            title={'G Force'}
-                                                                            value={Math.max(
-                                                                                // @ts-ignore
-                                                                                ...FlightLogStore?.flightStatus?.locations
-                                                                                    ?.slice(
-                                                                                        FlightLogStore.LandingData
-                                                                                            .touchdownIndex[index],
-                                                                                        FlightLogStore.LandingData
-                                                                                            .touchdownIndex[index] + 50
-                                                                                    )
-                                                                                    .map((v) => v.gforce)
-                                                                            )}
-                                                                            loading={
-                                                                                FlightLogStore.FlightDetailData
-                                                                                    .length == 0
-                                                                            }
-                                                                            precision={2}
-                                                                            valueStyle={{fontSize: 'small'}}
-                                                                        />
-                                                                    </Col>
-                                                                    <Col span={6}>
-                                                                        <Statistic
-                                                                            title={'Pitch(deg)'}
-                                                                            // suffix={'deg'}
-                                                                            loading={
-                                                                                FlightLogStore.FlightDetailData
-                                                                                    .length == 0
-                                                                            }
-                                                                            value={
-                                                                                // @ts-ignore
-                                                                                FlightLogStore?.flightStatus?.locations[
-                                                                                    FlightLogStore.LandingData
-                                                                                        .touchdownIndex[index]
-                                                                                    ].pitch
-                                                                            }
-                                                                            precision={2}
-                                                                            valueStyle={{fontSize: 'small'}}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Panel>
-                                                        );
-                                                    })}
-                                                </Collapse>
-                                            </Panel>
-                                            {/*<Panel header="Rules" key="4">*/}
-                                            {/*  <p>RULES</p>*/}
-                                            {/*  <p>RULES</p>*/}
-                                            {/*  <p>RULES</p>*/}
-                                            {/*  <p>RULES</p>*/}
-                                            {/*  <p>RULES</p>*/}
-                                            {/*</Panel>*/}
-                                        </Collapse>
-                                    </Row>
-                                </Card>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-                <Col
-                    span={windowDimensions.width > windowDimensions.height ? 12 : 24}
-                    style={{height: `${windowDimensions.width > windowDimensions.height ? '100%' : '40%'}`}}
-                >
-                    <Card
-                        style={{
-                            height: `${windowDimensions.width > 992 ? '100%' : '99%'}`,
-                        }}
+                                                                                            .touchdownIndex[index]
+                                                                                        ].pitch
+                                                                                }
+                                                                                precision={2}
+                                                                                valueStyle={{fontSize: 'small'}}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Panel>
+                                                            );
+                                                        })}
+                                                    </Collapse>
+                                                </Panel>
+                                                {/*<Panel header="Rules" key="4">*/}
+                                                {/*  <p>RULES</p>*/}
+                                                {/*  <p>RULES</p>*/}
+                                                {/*  <p>RULES</p>*/}
+                                                {/*  <p>RULES</p>*/}
+                                                {/*  <p>RULES</p>*/}
+                                                {/*</Panel>*/}
+                                            </Collapse>
+                                        </Row>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                    <Col
+                        span={windowDimensions.width > windowDimensions.height ? 12 : 24}
+                        style={{height: `${windowDimensions.width > windowDimensions.height ? '100%' : '40%'}`}}
                     >
-                        <MapDetailed data={FlightLogStore.mapData}/>
-                    </Card>
-                </Col>
-            </Row>
+                        <Card
+                            style={{
+                                height: `${windowDimensions.width > 992 ? '100%' : '99%'}`,
+                            }}
+                        >
+                            <MapDetailed data={FlightLogStore.mapData}/>
+                        </Card>
+                    </Col>
+                </Row>
+
+            </>
         )
     );
 }

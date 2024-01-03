@@ -35,3 +35,10 @@ body {
     overflow: hidden;
     max-height: 100%; /* Adjust as needed */
 }
+
+.xairline-floating-button {
+    position: fixed;
+    top: 10px; /* Adjust as needed */
+    left: 10px; /* Adjust as needed */
+    z-index: 1000; /* To ensure it stays on top */
+}
