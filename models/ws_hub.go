@@ -61,16 +61,16 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) Cleanup() {
-	ticker := time.NewTicker(15 * time.Minute)
+	ticker := time.NewTicker(15 * time.Second)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ticker.C:
 			counter := 0
 			logger := utils.NewLogger()
-			logger.Infof("Active clients before: %d", counter)
+			logger.Infof("Active clients before: %d", len(h.Clients))
 			for client := range h.Clients {
-				if time.Since(client.LastActivity) > 20*time.Minute {
+				if time.Since(client.LastActivity) > 20*time.Second {
 					client.Logger.Infof("Client: %s inactive for 20 minutes, closing connection", client.Id)
 					close(client.Send) // This will cause WritePump to close the connection
 				} else {
