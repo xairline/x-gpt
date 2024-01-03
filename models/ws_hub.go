@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/xairline/x-gpt/utils"
 	"sync"
+	"time"
 )
 
 type Client struct {
@@ -82,6 +83,10 @@ func (c *Client) WritePump() {
 func (c *Client) Lock() {
 	c.mu.Lock()
 	c.Logger.Infof("Client %s locked", c.Id)
+	// Schedule an automatic unlock after the timeout.
+	time.AfterFunc(5*time.Second, func() {
+		c.Unlock()
+	})
 }
 
 // Unlock unlocks the Hub. It should be called after Lock when the Hub's data manipulation is done.
