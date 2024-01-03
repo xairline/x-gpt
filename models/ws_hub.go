@@ -81,9 +81,11 @@ func (c *Client) WritePump() {
 // Lock locks the Hub. It should be used when accessing or modifying the Hub's data.
 func (c *Client) Lock() {
 	c.mu.Lock()
+	c.Logger.Infof("Client %s locked", c.Id)
 }
 
 // Unlock unlocks the Hub. It should be called after Lock when the Hub's data manipulation is done.
 func (c *Client) Unlock() {
 	c.mu.Unlock()
+	c.Logger.Infof("Client %s unlocked", c.Id)
 }

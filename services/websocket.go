@@ -121,7 +121,6 @@ func (ws webSocketService) SendWsMsgByClientId(clientId string, message string) 
 			// Found the client, send the message
 			ws.Logger.Infof("Client: %s, sending: %s - wait for lock", clientId, message)
 			client.Lock()
-			ws.Logger.Infof("Client: %s, sending: %s - locked", clientId, message)
 			select {
 			case client.Send <- []byte(message):
 				ws.Logger.Infof("Client: %s, sending: %s - waiting for response", clientId, message)
