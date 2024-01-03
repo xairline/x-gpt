@@ -29,6 +29,6 @@ jobs:
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@1.3.0
         with:
-          working-directory: web
+          workingDirectory: web
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           environment: 'production'  # or your specific environment
