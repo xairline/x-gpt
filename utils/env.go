@@ -30,7 +30,7 @@ func NewEnv(log Logger) Env {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("☠️ cannot read configuration")
+		log.Errorf("☠️ cannot read configuration")
 	}
 
 	err = viper.Unmarshal(&env)
