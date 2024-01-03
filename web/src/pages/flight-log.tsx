@@ -1,5 +1,5 @@
 import {Card, Col, Collapse, Row, Spin, Statistic, Timeline} from 'antd';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useObserver} from 'mobx-react-lite';
 import {useParams} from 'react-router-dom';
 import {DualAxes} from '@ant-design/plots';
@@ -161,10 +161,9 @@ export function FlightLog(props: FlightLogProps) {
         ) : (
             <Row style={{height: '100%'}} gutter={8}>
                 <Col
-                    lg={12}
-                    span={24}
+                    span={windowDimensions.width > windowDimensions.height ? 12 : 24}
                     style={{
-                        height: `${windowDimensions.width > 992 ? '100%' : '60%'}`,
+                        height: `${windowDimensions.width > windowDimensions.height ? '100%' : '60%'}`,
                     }}
                 >
                     <Card
@@ -401,9 +400,8 @@ export function FlightLog(props: FlightLogProps) {
                     </Card>
                 </Col>
                 <Col
-                    lg={12}
-                    span={24}
-                    style={{height: `${windowDimensions.width > 992 ? '100%' : '40%'}`}}
+                    span={windowDimensions.width > windowDimensions.height ? 12 : 24}
+                    style={{height: `${windowDimensions.width > windowDimensions.height ? '100%' : '40%'}`}}
                 >
                     <Card
                         style={{

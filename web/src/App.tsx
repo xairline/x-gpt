@@ -42,7 +42,7 @@ const App: React.FC = () => {
                             display: "flex",
                             height: "100%",
                         }}>
-                            <Image src={"logo512.png"}
+                            <Image src={"/logo512.png"}
                                    style={{maxHeight: "8vh", objectFit: "contain", margin: "12px 24px 12px"}}>
                             </Image>
 
