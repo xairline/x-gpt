@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/spf13/viper"
 	"path/filepath"
+	"reflect"
 	"runtime"
 )
 
@@ -22,7 +23,6 @@ type Env struct {
 func NewEnv(log Logger) Env {
 
 	env := Env{}
-	viper.AutomaticEnv()
 
 	_, filename, _, _ := runtime.Caller(0)
 	dir := filepath.Dir(filename)
@@ -35,6 +35,16 @@ func NewEnv(log Logger) Env {
 			// The error is something other than the file not found
 			log.Errorf("☠️ cannot read configuration: %v", err)
 		}
+	}
+
+	v := reflect.ValueOf(env)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
+		key := field.Tag.Get("mapstructure")
+		if key == "" {
+			key = field.Name
+		}
+		viper.BindEnv(key)
 	}
 
 	// Unmarshal the environment variables into the Env struct
