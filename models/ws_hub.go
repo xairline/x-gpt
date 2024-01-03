@@ -14,6 +14,7 @@ type Client struct {
 	Send   chan []byte
 	Logger utils.Logger
 	mu     sync.Mutex
+	locked bool
 }
 
 type Hub struct {
@@ -82,15 +83,20 @@ func (c *Client) WritePump() {
 // Lock locks the Hub. It should be used when accessing or modifying the Hub's data.
 func (c *Client) Lock() {
 	c.mu.Lock()
+	c.locked = true
 	c.Logger.Infof("Client %s locked", c.Id)
 	// Schedule an automatic unlock after the timeout.
 	time.AfterFunc(5*time.Second, func() {
-		c.Unlock()
+		if c.locked {
+			c.Logger.Infof("Client %s auto unlock", c.Id)
+			c.Unlock()
+		}
 	})
 }
 
 // Unlock unlocks the Hub. It should be called after Lock when the Hub's data manipulation is done.
 func (c *Client) Unlock() {
+	c.locked = false
 	c.mu.Unlock()
 	c.Logger.Infof("Client %s unlocked", c.Id)
 }
