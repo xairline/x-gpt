@@ -98,7 +98,7 @@ func (c *Client) WritePump() {
 				return
 			}
 			w.Write(message)
-			c.Logger.Infof("Client: %s sent: %s", c.Id, message)
+			c.Logger.Infof("Client: %s, sent: %s", c.Id, message)
 			if err := w.Close(); err != nil {
 				return
 			}
@@ -110,11 +110,11 @@ func (c *Client) WritePump() {
 func (c *Client) Lock() {
 	c.mu.Lock()
 	c.locked = true
-	c.Logger.Infof("Client: %s locked", c.Id)
+	c.Logger.Infof("Client: %s, locked", c.Id)
 	// Schedule an automatic unlock after the timeout.
 	time.AfterFunc(5*time.Second, func() {
 		if c.locked {
-			c.Logger.Infof("Client: %s auto unlock", c.Id)
+			c.Logger.Infof("Client: %s, auto unlock", c.Id)
 			c.Unlock()
 		}
 	})
@@ -124,5 +124,5 @@ func (c *Client) Lock() {
 func (c *Client) Unlock() {
 	c.locked = false
 	c.mu.Unlock()
-	c.Logger.Infof("Client: %s unlocked", c.Id)
+	c.Logger.Infof("Client: %s, unlocked", c.Id)
 }

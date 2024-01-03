@@ -68,7 +68,7 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 				break
 			}
 			if response == "SyncFlightLogs|Done" {
-				ws.Logger.Infof("Synced flight logs for client: %s", clientId)
+				ws.Logger.Infof("Client: %s, Flight logs synced", clientId)
 				break
 			}
 			var flightStatuses, syncedFlightStatuses []models.FlightStatus
@@ -80,7 +80,7 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 				syncedFlightStatuses = append(syncedFlightStatuses, flightStatus)
 			}
 			ws.FlightLogsService.SaveFlightStatuses(syncedFlightStatuses)
-			ws.Logger.Infof("Synced flight logs for client: %s", clientId)
+			ws.Logger.Infof("Client: %s, Flight logs synced", clientId)
 		}
 	}()
 	//go client.ReadPump()
