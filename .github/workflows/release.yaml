@@ -33,3 +33,7 @@ jobs:
           branch: main
           # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
           wranglerVersion: '3'
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
