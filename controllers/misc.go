@@ -35,7 +35,6 @@ func NewMiscController(logger utils.Logger) MiscController {
 //	@Router		/version [get]
 func (u MiscController) GetVersion(c *gin.Context) {
 	// log headers
-	u.logger.Info("Headers: %v", c.Request.Header)
 	c.JSON(200, utils.ResponseOk{Message: VERSION})
 }
 

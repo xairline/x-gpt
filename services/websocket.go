@@ -47,16 +47,17 @@ func (ws webSocketService) Upgrade(c *gin.Context, clientId string) {
 		log.Println(err)
 		return
 	}
-	client := &models.Client{
-		Id:     clientId,
-		Hub:    ws.Hub,
-		Conn:   conn,
-		Send:   make(chan []byte, 256),
-		Logger: ws.Logger,
+	if !ws.IsClientExist(clientId) {
+		client := &models.Client{
+			Id:     clientId,
+			Hub:    ws.Hub,
+			Conn:   conn,
+			Send:   make(chan []byte, 256),
+			Logger: ws.Logger,
+		}
+		client.Hub.Register <- client
+		go client.WritePump()
 	}
-	client.Hub.Register <- client
-
-	go client.WritePump()
 
 	go func() {
 		for {
