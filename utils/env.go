@@ -22,19 +22,23 @@ type Env struct {
 func NewEnv(log Logger) Env {
 
 	env := Env{}
+	viper.AutomaticEnv()
+
 	_, filename, _, _ := runtime.Caller(0)
 	dir := filepath.Dir(filename)
 	viper.SetConfigFile(filepath.Join(dir, "..", ".env"))
 	viper.SetConfigType("env")
-	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Errorf("☠️ cannot read configuration")
+	// Read the config file (.env), but ignore the error if the file does not exist
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			// The error is something other than the file not found
+			log.Errorf("☠️ cannot read configuration: %v", err)
+		}
 	}
 
-	err = viper.Unmarshal(&env)
-	if err != nil {
+	// Unmarshal the environment variables into the Env struct
+	if err := viper.Unmarshal(&env); err != nil {
 		log.Fatal("☠️ environment can't be loaded: ", err)
 	}
 
