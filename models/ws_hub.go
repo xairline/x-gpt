@@ -72,7 +72,7 @@ func (h *Hub) Cleanup() {
 			for client := range h.Clients {
 				if time.Since(client.LastActivity) > 20*time.Second {
 					client.Logger.Infof("Client: %s inactive for 20 minutes, closing connection", client.Id)
-					close(client.Send) // This will cause WritePump to close the connection
+					h.Unregister <- client
 				} else {
 					counter++
 				}
