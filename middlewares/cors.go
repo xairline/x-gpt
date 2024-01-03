@@ -7,7 +7,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		origin := c.Request.Header.Get("Origin")
 
 		// Define your allowed domains
-		var allowedOrigins = []string{"https://web.xairline.org", "http://localhost:3000"}
+		var allowedOrigins = []string{"https://web.xairline.org", "https://xairline.org", "https://www.xairline.org", "http://localhost:3000"}
 
 		// Check if the request's origin is in the list of allowed origins
 		for _, allowedOrigin := range allowedOrigins {
