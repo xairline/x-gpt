@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import 'antd/dist/reset.css';
 // import "@ant-design/plots/dist/index.css";
 import './App.css';
-import {Col, ConfigProvider, Image, Layout, Row, Typography} from 'antd';
+import {Col, ConfigProvider, Image, Layout, Modal, Row, Typography} from 'antd';
 import UserInfo from "./components/UserInfo";
 import {Link, Route, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
@@ -10,6 +10,7 @@ import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import {useLogto} from '@logto/react';
 import Callback from "./pages/Callback";
 import FlightLog from "./pages/flight-log";
+import Markdown from "react-markdown";
 
 const {Title} = Typography;
 const {Content,} = Layout;
@@ -17,9 +18,24 @@ const {Content,} = Layout;
 const App: React.FC = () => {
     let location = window.location.pathname;
     const screens = useBreakpoint();
-    const {isAuthenticated, fetchUserInfo} = useLogto();
-    useEffect(() => {
+    const [token, setToken] = useState("");
+    const {isAuthenticated, fetchUserInfo, getAccessTokenClaims, getIdToken} = useLogto();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    }
+
+    useEffect(() => {
+        (async () => {
+            if (isAuthenticated) {
+                const token = await getIdToken();
+                setToken(token as string);
+            }
+        })();
     }, [isAuthenticated, fetchUserInfo]);
     const [current, setCurrent] = useState(
         location === "/" || location === ""
@@ -81,9 +97,37 @@ const App: React.FC = () => {
                             alignItems: "center",
                             height: "100%",
                             marginRight: !screens.sm ? "12px" : "24px",
+                            marginLeft: !screens.sm ? "12px" : "24px",
                         }}>
                             <Col span={6}>
-                                <a href={"https://docs.xairline.org"}>
+                                <Modal
+                                    title="Download"
+                                    open={isModalOpen}
+                                    onOk={handleOk}
+                                    cancelButtonProps={{style: {display: "none"}}}
+                                >
+                                    < Markdown>
+                                        {`
+# Download and install plugin
+[Download](https://github.com/xairline/xairline-v2/releases/latest/download/XWebStack.zip) and unzip the plugin to your X-Plane plugin folder.
+# Access Token
+
+\`
+${token ? "CLIENT_TOKEN=" + token : "Login/Sign up to get your access token."}
+\`
+
+# Configuration
+Copy above token, including **CLIENT_TOKEN=**, and past it into the **config** file under **PATH_TO_XPLANE/Resources/plugins/XWebStack** folder.
+
+# Access GPTs
+[GPTs](https://chat.openai.com/g/g-sPpIgSxow-x-airline)                      
+`}
+                                    </Markdown>
+
+                                </Modal>
+                                <a href={"#"} onClick={() => {
+                                    setIsModalOpen(true)
+                                }}>
                                     <Title
                                         level={screens.xxl ? 2 : 5}
                                         italic={true}
@@ -91,7 +135,7 @@ const App: React.FC = () => {
                                             marginTop: "24px",
                                             color: "white"
                                         }}>
-                                        Docs
+                                        chatGPT
                                     </Title>
                                 </a>
                             </Col>

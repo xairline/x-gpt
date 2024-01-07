@@ -1,0 +1,268 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "X Airline",
+    "description": "Connect X Plane with GPT",
+    "contact": {},
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://app.xairline.org"
+    }
+  ],
+  "paths": {
+    "/apis/xplm/command": {
+      "put": {
+        "operationId": "sendCommand",
+        "security": [
+          {
+            "Oauth2Application": [
+              ""
+            ]
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Dataref"
+        ],
+        "summary": "Send command to X Plane",
+        "parameters": [
+          {
+            "description": "xplane command",
+            "name": "command",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "501": {
+            "description": "Not Implemented"
+          }
+        }
+      }
+    },
+    "/apis/xplm/dataref": {
+      "get": {
+        "tags": [
+          "Dataref"
+        ],
+        "summary": "Get Dataref",
+        "operationId": "getDataref",
+        "parameters": [
+          {
+            "name": "dataref_str",
+            "in": "query",
+            "description": "xplane dataref string",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alias",
+            "in": "query",
+            "description": "alias name, if not set, dataref_str will be used",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "precision",
+            "in": "query",
+            "description": "-1: raw, 2: round up to two digits",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "is_byte_array",
+            "in": "query",
+            "description": "transform xplane byte array to string",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Oauth2Application": [
+              ""
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Dataref"
+        ],
+        "operationId": "setDataref",
+        "summary": "Set Dataref",
+        "parameters": [
+          {
+            "name": "dataref",
+            "in": "body",
+            "description": "xplane dataref string",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "double"
+            }
+          },
+          {
+            "name": "value",
+            "in": "body",
+            "description": "xplane dataref value",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "501": {
+            "description": "Not Implemented"
+          }
+        },
+        "security": [
+          {
+            "Oauth2Application": [
+              ""
+            ]
+          }
+        ]
+      }
+    },
+    "/apis/version": {
+      "get": {
+        "tags": [
+          "Misc"
+        ],
+        "summary": "Get version of GPT X-Plane plugin",
+        "operationId": "getVersion",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ListCoffeeItemDto": {
+        "required": [
+          "currency",
+          "description",
+          "id",
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "ListCoffeesDto": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListCoffeeItemDto"
+            }
+          }
+        }
+      },
+      "DetailedCoffeeDto": {
+        "required": [
+          "calories",
+          "currency",
+          "deliveryTime",
+          "description",
+          "id",
+          "name",
+          "price",
+          "temperature"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "temperature": {
+            "type": "string"
+          },
+          "deliveryTime": {
+            "type": "string"
+          },
+          "calories": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}
